@@ -53,7 +53,7 @@ export function MainLayout({ children }: MainLayoutProps) {
         <div className="container-mobile flex h-14 md:h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <img src={logoColor} alt="Event-Sync" className="h-8 w-auto" />
+            <img src={logoColor} alt="Eventsync" className="h-8 w-auto" />
           </Link>
 
           {/* Desktop Navigation */}
@@ -189,9 +189,9 @@ export function MainLayout({ children }: MainLayoutProps) {
       <footer className="border-t py-6 md:py-8 safe-area-bottom">
         <div className="container-mobile flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <img src={logoColor} alt="Event-Sync" className="h-6 w-auto" />
+            <img src={logoColor} alt="Eventsync" className="h-6 w-auto" />
             <span className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} Event-Sync. All rights reserved.
+              © {new Date().getFullYear()} Eventsync. All rights reserved.
             </span>
           </div>
           <div className="flex items-center gap-4 text-sm text-muted-foreground">

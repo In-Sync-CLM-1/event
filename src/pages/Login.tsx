@@ -93,7 +93,7 @@ export default function Login() {
       {/* Header */}
       <header className="p-4">
         <Link to="/" className="flex items-center">
-          <img src={logoColor} alt="Event-Sync" className="h-8 w-auto" />
+          <img src={logoColor} alt="Eventsync" className="h-8 w-auto" />
         </Link>
       </header>
 

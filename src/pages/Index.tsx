@@ -92,7 +92,7 @@ const GAMIFICATION_FEATURES = [
 
 const TESTIMONIALS = [
   {
-    quote: 'We ran a 2,000-person conference with Event-Sync. Check-in for all attendees took under 20 minutes. Our previous system took 2 hours.',
+    quote: 'We ran a 2,000-person conference with Eventsync. Check-in for all attendees took under 20 minutes. Our previous system took 2 hours.',
     name: 'Priya Nair',
     role: 'Head of Events',
     company: 'TechSummit India',
@@ -155,7 +155,7 @@ const FAQS = [
   },
   {
     q: 'How do WhatsApp notifications work?',
-    a: 'Event-Sync sends automated WhatsApp messages directly to attendees\' phones — registration confirmation with QR code, 24-hour event reminder, check-in confirmation, certificate issued, and more. Messages are sent via approved Meta templates so they land in the primary chat, not spam.',
+    a: 'Eventsync sends automated WhatsApp messages directly to attendees\' phones — registration confirmation with QR code, 24-hour event reminder, check-in confirmation, certificate issued, and more. Messages are sent via approved Meta templates so they land in the primary chat, not spam.',
   },
 ];
 
@@ -363,7 +363,7 @@ export default function Index() {
             custom={2} variants={fadeUp} initial="hidden" animate="visible"
             className="mt-6 text-lg sm:text-xl text-white/65 max-w-2xl mx-auto text-balance leading-relaxed"
           >
-            Event-Sync handles registration, QR check-in, WhatsApp & email notifications, live leaderboards, certificates, and analytics — all without stitching together a dozen tools.
+            Eventsync handles registration, QR check-in, WhatsApp & email notifications, live leaderboards, certificates, and analytics — all without stitching together a dozen tools.
           </motion.p>
 
           <motion.div
@@ -406,14 +406,14 @@ export default function Index() {
                 <div className="w-2.5 h-2.5 rounded-full bg-amber-500/60" />
                 <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/60" />
                 <div className="ml-3 flex-1 bg-white/10 rounded-md h-5 max-w-xs flex items-center px-3">
-                  <span className="text-white/30 text-[10px]">event-sync.app/demo</span>
+                  <span className="text-white/30 text-[10px]">Eventsync.app/demo</span>
                 </div>
               </div>
               <div className="rounded-xl overflow-hidden" style={{ height: '480px' }}>
                 <iframe
                   src="/demo"
                   className="w-full h-full border-0"
-                  title="Event-Sync Product Demo"
+                  title="Eventsync Product Demo"
                 />
               </div>
             </div>
@@ -479,7 +479,7 @@ export default function Index() {
             <motion.p custom={2} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
               className="mt-4 text-lg text-slate-500 max-w-xl mx-auto"
             >
-              Stop stitching together a dozen apps. Event-Sync handles every phase from registration to report.
+              Stop stitching together a dozen apps. Eventsync handles every phase from registration to report.
             </motion.p>
           </div>
 
@@ -571,7 +571,7 @@ export default function Index() {
               className="mt-3 text-3xl sm:text-4xl font-bold text-white text-balance max-w-3xl mx-auto"
             >
               Most events lose attendees to their phones by hour two.
-              <span className="text-blue-300"> Event-Sync keeps them competing.</span>
+              <span className="text-blue-300"> Eventsync keeps them competing.</span>
             </motion.h2>
             <motion.p custom={2} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
               className="mt-5 text-lg text-white/60 max-w-2xl mx-auto leading-relaxed"
@@ -610,7 +610,7 @@ export default function Index() {
                   </ul>
                 </div>
                 <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4">
-                  <div className="text-xs font-semibold text-emerald-400 uppercase tracking-wider mb-2">With Event-Sync</div>
+                  <div className="text-xs font-semibold text-emerald-400 uppercase tracking-wider mb-2">With Eventsync</div>
                   <ul className="space-y-1.5 text-sm text-white/50">
                     <li className="flex items-start gap-2"><span className="text-emerald-400 mt-0.5 flex-shrink-0">✓</span>Attendees checking leaderboard between sessions</li>
                     <li className="flex items-start gap-2"><span className="text-emerald-400 mt-0.5 flex-shrink-0">✓</span>Sponsors see 3.2× more interactions</li>
@@ -872,7 +872,7 @@ export default function Index() {
           <motion.p custom={1} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
             className="mt-5 text-xl text-white/75"
           >
-            Join 500+ organizers already running smarter events with Event-Sync.
+            Join 500+ organizers already running smarter events with Eventsync.
           </motion.p>
           <motion.div
             custom={2} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}

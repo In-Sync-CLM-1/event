@@ -52,7 +52,7 @@ export default function MySchedule() {
       const end = new Date(session.end_time).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
       
       return `BEGIN:VEVENT
-UID:${session.id}@event-sync
+UID:${session.id}@Eventsync
 DTSTART:${start}
 DTEND:${end}
 SUMMARY:${session.title}
@@ -63,7 +63,7 @@ END:VEVENT`;
 
     const ics = `BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//Event-Sync//EN
+PRODID:-//Eventsync//EN
 ${icsContent}
 END:VCALENDAR`;
 

@@ -72,7 +72,7 @@ export default function Register() {
       } else {
         toast({
           title: 'Account created!',
-          description: 'Welcome to Event-Sync. You can now sign in.',
+          description: 'Welcome to Eventsync. You can now sign in.',
         });
         navigate('/');
       }
@@ -86,7 +86,7 @@ export default function Register() {
       {/* Header */}
       <header className="p-4">
         <Link to="/" className="flex items-center">
-          <img src={logoColor} alt="Event-Sync" className="h-8 w-auto" />
+          <img src={logoColor} alt="Eventsync" className="h-8 w-auto" />
         </Link>
       </header>
 
@@ -96,7 +96,7 @@ export default function Register() {
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold">Create an account</h1>
             <p className="text-muted-foreground mt-2">
-              Get started with Event-Sync today
+              Get started with Eventsync today
             </p>
           </div>
 

@@ -5,7 +5,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const FROM = "Event-Sync <noreply@in-sync.co.in>";
+const FROM = "Eventsync <noreply@in-sync.co.in>";
 const RESEND_URL = "https://api.resend.com/emails";
 
 function json(data: unknown, status = 200) {
@@ -39,7 +39,7 @@ function baseLayout(content: string, previewText = "") {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Event-Sync</title>
+  <title>Eventsync</title>
   <meta name="x-apple-disable-message-reformatting" />
 </head>
 <body style="margin:0;padding:0;background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
@@ -51,7 +51,7 @@ function baseLayout(content: string, previewText = "") {
         <tr>
           <td style="background:linear-gradient(135deg,#1e40af 0%,#0891b2 100%);padding:32px 40px;text-align:center;">
             <span style="display:inline-block;background:rgba(255,255,255,0.15);border-radius:12px;padding:10px 20px;">
-              <span style="color:#ffffff;font-size:20px;font-weight:800;letter-spacing:-0.5px;">Event-Sync</span>
+              <span style="color:#ffffff;font-size:20px;font-weight:800;letter-spacing:-0.5px;">Eventsync</span>
             </span>
           </td>
         </tr>
@@ -63,7 +63,7 @@ function baseLayout(content: string, previewText = "") {
             <p style="margin:0;font-size:12px;color:#94a3b8;">
               © ${new Date().getFullYear()} In-Sync · <a href="https://in-sync.co.in" style="color:#94a3b8;">in-sync.co.in</a>
             </p>
-            <p style="margin:8px 0 0;font-size:11px;color:#cbd5e1;">You're receiving this because you registered for an event on Event-Sync.</p>
+            <p style="margin:8px 0 0;font-size:11px;color:#cbd5e1;">You're receiving this because you registered for an event on Eventsync.</p>
           </td>
         </tr>
       </table>
@@ -268,7 +268,7 @@ Deno.serve(async (req) => {
       hour: "2-digit", minute: "2-digit",
     });
 
-    const baseUrl = Deno.env.get("SITE_URL") || "https://event-sync.in-sync.co.in";
+    const baseUrl = Deno.env.get("SITE_URL") || "https://Eventsync.in-sync.co.in";
 
     const result = await sendEmail(
       reg.email,
@@ -307,7 +307,7 @@ Deno.serve(async (req) => {
 
     const reg  = Array.isArray(cert.registrations) ? cert.registrations[0] : cert.registrations as { full_name: string; email: string };
     const event = Array.isArray(cert.events) ? cert.events[0] : cert.events as { title: string };
-    const baseUrl = Deno.env.get("SITE_URL") || "https://event-sync.in-sync.co.in";
+    const baseUrl = Deno.env.get("SITE_URL") || "https://Eventsync.in-sync.co.in";
 
     const result = await sendEmail(
       reg.email,
@@ -352,7 +352,7 @@ Deno.serve(async (req) => {
       hour: "2-digit", minute: "2-digit",
     });
 
-    const baseUrl = Deno.env.get("SITE_URL") || "https://event-sync.in-sync.co.in";
+    const baseUrl = Deno.env.get("SITE_URL") || "https://Eventsync.in-sync.co.in";
 
     const result = await sendEmail(
       reg.email,

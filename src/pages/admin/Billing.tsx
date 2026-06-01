@@ -130,7 +130,7 @@ function AddFundsDialog({
           amount:      order.amount,
           currency:    order.currency,
           order_id:    order.order_id,
-          name:        'Event-Sync',
+          name:        'Eventsync',
           description: 'Wallet Recharge',
           prefill: {
             name:  profile?.full_name || '',

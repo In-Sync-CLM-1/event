@@ -1,4 +1,4 @@
-# In-Sync Event-Sync
+# In-Sync Eventsync
 
 Professional event management platform: registration, check-in, agenda management, attendee engagement, meetings, landing-page builder, and PWA support — all in one app.
 
@@ -46,10 +46,10 @@ The frontend ships directly from a local working tree using Wrangler. There is n
 ```powershell
 npm run build
 Set-Content -Path dist\_redirects -Value "/*  /index.html  200"
-wrangler pages deploy dist --project-name=event-sync --branch=main
+wrangler pages deploy dist --project-name=Eventsync --branch=main
 ```
 
-The Cloudflare Pages project is `event-sync`, served at `https://event-sync.pages.dev`. The custom domain `event.in-sync.co.in` points at it via a proxied CNAME on the `in-sync.co.in` zone.
+The Cloudflare Pages project is `Eventsync`, served at `https://Eventsync.pages.dev`. The custom domain `event.in-sync.co.in` points at it via a proxied CNAME on the `in-sync.co.in` zone.
 
 ## Deploy — Supabase (CI)
 
@@ -65,10 +65,10 @@ Required GitHub Actions secrets:
 
 Production: `https://event.in-sync.co.in`
 
-DNS is managed in Cloudflare; the record is a proxied CNAME pointing at `event-sync.pages.dev`.
+DNS is managed in Cloudflare; the record is a proxied CNAME pointing at `Eventsync.pages.dev`.
 
 ## Rollback
 
-Forward-rollback (bad new deploy, Pages itself fine): use the Cloudflare Pages dashboard to roll back to a previous deployment of `event-sync`.
+Forward-rollback (bad new deploy, Pages itself fine): use the Cloudflare Pages dashboard to roll back to a previous deployment of `Eventsync`.
 
 Full rollback to Azure (only viable while the legacy SWA still exists): PATCH the production CNAME back to the Azure target (`proud-sand-0b62db01e.7.azurestaticapps.net`) via the Cloudflare API.

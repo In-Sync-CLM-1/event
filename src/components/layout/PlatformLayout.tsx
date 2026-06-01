@@ -96,7 +96,7 @@ export function PlatformLayout({ children }: PlatformLayoutProps) {
     <div className="flex flex-col h-full bg-card pt-5 pb-4">
       <div className="px-4 mb-6">
         <Link to="/" className="flex items-center mb-3">
-          <img src={logoColor} alt="Event-Sync" className="h-8 w-auto" />
+          <img src={logoColor} alt="Eventsync" className="h-8 w-auto" />
         </Link>
         <Badge variant="secondary" className="gap-1 text-xs">
           <Shield className="h-3 w-3" />
@@ -130,7 +130,7 @@ export function PlatformLayout({ children }: PlatformLayoutProps) {
           </SheetContent>
         </Sheet>
         <div className="flex items-center gap-2">
-          <img src={logoColor} alt="Event-Sync" className="h-6 w-auto" />
+          <img src={logoColor} alt="Eventsync" className="h-6 w-auto" />
           <Badge variant="secondary" className="gap-1 text-xs">
             <Shield className="h-3 w-3" />
             Platform

@@ -173,7 +173,7 @@ function MockSidebar({ active }: { active: string }) {
         <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary">
           <Calendar className="h-3.5 w-3.5 text-primary-foreground" />
         </div>
-        <span className="text-sm font-bold tracking-tight text-foreground">Event-Sync</span>
+        <span className="text-sm font-bold tracking-tight text-foreground">Eventsync</span>
       </div>
       <div className="border-b border-border/40 px-3 py-2">
         <div className="rounded-md bg-muted/50 px-2.5 py-1 text-[10px] font-medium text-muted-foreground">
@@ -228,7 +228,7 @@ function SceneIntro() {
         transition={{ delay: 0.3, duration: 0.5 }}
         className="relative text-5xl font-extrabold tracking-tight text-foreground"
       >
-        Event-Sync
+        Eventsync
       </motion.h1>
 
       <motion.p
@@ -1214,7 +1214,7 @@ export default function Demo() {
       <div className="flex items-center justify-between border-b border-white/10 bg-black px-4 py-2">
         <Link to="/" className="flex items-center gap-2 text-sm text-white/60 hover:text-white/80 transition-colors">
           <Calendar className="h-4 w-4" />
-          <span className="font-medium">Event-Sync Demo</span>
+          <span className="font-medium">Eventsync Demo</span>
         </Link>
 
         <div className="flex items-center gap-2">

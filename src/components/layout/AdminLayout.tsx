@@ -122,7 +122,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         <div className="flex flex-col flex-grow bg-card border-r pt-5 pb-4 overflow-y-auto">
           {/* Logo */}
           <Link to="/" className="flex items-center px-4 mb-8">
-            <img src={logoColor} alt="Event-Sync" className="h-8 w-auto" />
+            <img src={logoColor} alt="Eventsync" className="h-8 w-auto" />
           </Link>
 
           {/* Navigation */}
@@ -169,7 +169,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             <div className="flex flex-col h-full bg-card pt-5 pb-4">
               {/* Logo */}
               <Link to="/" className="flex items-center px-4 mb-8">
-                <img src={logoColor} alt="Event-Sync" className="h-8 w-auto" />
+                <img src={logoColor} alt="Eventsync" className="h-8 w-auto" />
               </Link>
 
               {/* Navigation */}

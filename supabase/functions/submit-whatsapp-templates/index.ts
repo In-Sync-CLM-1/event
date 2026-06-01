@@ -1,4 +1,4 @@
-// Submits all Event-Sync WhatsApp templates to Meta via Exotel.
+// Submits all Eventsync WhatsApp templates to Meta via Exotel.
 // Call this once (or after adding new templates) — Meta approval takes 24-48 hrs.
 //
 // Template inventory (13 total):
@@ -26,7 +26,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const BASE_URL = "https://event-sync.in-sync.co.in";
+const BASE_URL = "https://Eventsync.in-sync.co.in";
 
 const TEMPLATES = [
 
@@ -39,7 +39,7 @@ const TEMPLATES = [
     components: [
       {
         type: "BODY",
-        text: "Hi {{1}},\n\nYour registration for *{{2}}* is confirmed! 🎉\n\nDate: {{3}}\nVenue: {{4}}\nReg #: {{5}}\n\nShow your QR code at the gate for instant check-in.\n\n— Event-Sync",
+        text: "Hi {{1}},\n\nYour registration for *{{2}}* is confirmed! 🎉\n\nDate: {{3}}\nVenue: {{4}}\nReg #: {{5}}\n\nShow your QR code at the gate for instant check-in.\n\n— Eventsync",
         example: {
           body_text: [["Priya Sharma", "Tech Summit 2026", "Sat, 20 Jun 2026, 09:00 AM", "HICC, Hyderabad", "EVT-0001-REG"]],
         },
@@ -65,7 +65,7 @@ const TEMPLATES = [
     components: [
       {
         type: "BODY",
-        text: "Hi {{1}},\n\nReminder: *{{2}}* is coming up! ⏰\n\nDate: {{3}}\nVenue: {{4}}\nYour Reg #: {{5}}\n\nBring your QR code for quick check-in. See you there!\n\n— Event-Sync",
+        text: "Hi {{1}},\n\nReminder: *{{2}}* is coming up! ⏰\n\nDate: {{3}}\nVenue: {{4}}\nYour Reg #: {{5}}\n\nBring your QR code for quick check-in. See you there!\n\n— Eventsync",
         example: {
           body_text: [["Priya Sharma", "Tech Summit 2026", "Sat, 20 Jun 2026, 09:00 AM", "HICC, Hyderabad", "EVT-0001-REG"]],
         },
@@ -80,7 +80,7 @@ const TEMPLATES = [
     components: [
       {
         type: "BODY",
-        text: "Hi {{1}},\n\nYou're checked in to *{{2}}*! ✅\n\nTime: {{3}}\n\nEnjoy the event! Head to the schedule to plan your sessions.\n\n— Event-Sync",
+        text: "Hi {{1}},\n\nYou're checked in to *{{2}}*! ✅\n\nTime: {{3}}\n\nEnjoy the event! Head to the schedule to plan your sessions.\n\n— Eventsync",
         example: {
           body_text: [["Priya Sharma", "Tech Summit 2026", "20 Jun 2026, 09:14 AM"]],
         },
@@ -106,7 +106,7 @@ const TEMPLATES = [
     components: [
       {
         type: "BODY",
-        text: "Hi {{1}},\n\nPayment received! ✅\n\nEvent: *{{2}}*\nAmount: ₹{{3}}\nReg #: {{4}}\nTransaction ID: {{5}}\n\nKeep this as your receipt.\n\n— Event-Sync",
+        text: "Hi {{1}},\n\nPayment received! ✅\n\nEvent: *{{2}}*\nAmount: ₹{{3}}\nReg #: {{4}}\nTransaction ID: {{5}}\n\nKeep this as your receipt.\n\n— Eventsync",
         example: {
           body_text: [["Priya Sharma", "Tech Summit 2026", "999", "EVT-0001-REG", "pay_QxR9sT1uVwXy"]],
         },
@@ -132,7 +132,7 @@ const TEMPLATES = [
     components: [
       {
         type: "BODY",
-        text: "Hi {{1}},\n\nYou've been added to the waitlist for *{{2}}*.\n\nWaitlist position: #{{3}}\n\nWe'll notify you immediately if a spot opens up.\n\n— Event-Sync",
+        text: "Hi {{1}},\n\nYou've been added to the waitlist for *{{2}}*.\n\nWaitlist position: #{{3}}\n\nWe'll notify you immediately if a spot opens up.\n\n— Eventsync",
         example: {
           body_text: [["Priya Sharma", "Tech Summit 2026", "7"]],
         },
@@ -147,7 +147,7 @@ const TEMPLATES = [
     components: [
       {
         type: "BODY",
-        text: "Hi {{1}},\n\nGreat news! 🎉 A spot opened up — your registration for *{{2}}* is now *confirmed*.\n\nDate: {{3}}\nVenue: {{4}}\nReg #: {{5}}\n\n— Event-Sync",
+        text: "Hi {{1}},\n\nGreat news! 🎉 A spot opened up — your registration for *{{2}}* is now *confirmed*.\n\nDate: {{3}}\nVenue: {{4}}\nReg #: {{5}}\n\n— Eventsync",
         example: {
           body_text: [["Priya Sharma", "Tech Summit 2026", "Sat, 20 Jun 2026, 09:00 AM", "HICC, Hyderabad", "EVT-0001-REG"]],
         },
@@ -173,7 +173,7 @@ const TEMPLATES = [
     components: [
       {
         type: "BODY",
-        text: "Hi {{1}},\n\nCongratulations! 🏆 Your certificate of participation for *{{2}}* is ready.\n\nCertificate #: {{3}}\n\nVerify and share your certificate below.\n\n— Event-Sync",
+        text: "Hi {{1}},\n\nCongratulations! 🏆 Your certificate of participation for *{{2}}* is ready.\n\nCertificate #: {{3}}\n\nVerify and share your certificate below.\n\n— Eventsync",
         example: {
           body_text: [["Priya Sharma", "Tech Summit 2026", "CERT-20260620-0001"]],
         },
@@ -199,7 +199,7 @@ const TEMPLATES = [
     components: [
       {
         type: "BODY",
-        text: "Hi {{1}},\n\nYou just unlocked a new badge! 🥇\n\n*{{2}}*\nAt: {{3}}\n\n{{4}}\n\nKeep engaging to earn more!\n\n— Event-Sync",
+        text: "Hi {{1}},\n\nYou just unlocked a new badge! 🥇\n\n*{{2}}*\nAt: {{3}}\n\n{{4}}\n\nKeep engaging to earn more!\n\n— Eventsync",
         example: {
           body_text: [["Priya Sharma", "Networking Pro", "Tech Summit 2026", "Awarded for connecting with 10+ attendees."]],
         },
@@ -214,7 +214,7 @@ const TEMPLATES = [
     components: [
       {
         type: "BODY",
-        text: "Hi {{1}},\n\nYou've reached *{{2}} points* at {{3}}! 🏆\n\nLatest activity: {{4}}\n\nCheck the leaderboard to see your rank.\n\n— Event-Sync",
+        text: "Hi {{1}},\n\nYou've reached *{{2}} points* at {{3}}! 🏆\n\nLatest activity: {{4}}\n\nCheck the leaderboard to see your rank.\n\n— Eventsync",
         example: {
           body_text: [["Priya Sharma", "500", "Tech Summit 2026", "Attended keynote session (+50 pts)"]],
         },
@@ -240,7 +240,7 @@ const TEMPLATES = [
     components: [
       {
         type: "BODY",
-        text: "Hi {{1}},\n\nWe regret to inform you that *{{2}}* scheduled for {{3}} has been *cancelled*.\n\n{{4}}\n\nRefunds (if applicable) will be processed within 5-7 business days. We apologise for the inconvenience.\n\n— Event-Sync",
+        text: "Hi {{1}},\n\nWe regret to inform you that *{{2}}* scheduled for {{3}} has been *cancelled*.\n\n{{4}}\n\nRefunds (if applicable) will be processed within 5-7 business days. We apologise for the inconvenience.\n\n— Eventsync",
         example: {
           body_text: [["Priya Sharma", "Tech Summit 2026", "Sat, 20 Jun 2026", "Due to unforeseen circumstances, the event cannot proceed as planned."]],
         },
@@ -255,7 +255,7 @@ const TEMPLATES = [
     components: [
       {
         type: "BODY",
-        text: "Hi {{1}},\n\nSchedule update for *{{2}}* ⚠️\n\nSession: {{3}}\nNew time: {{4}}\nNew venue: {{5}}\n\nWe apologise for any inconvenience.\n\n— Event-Sync",
+        text: "Hi {{1}},\n\nSchedule update for *{{2}}* ⚠️\n\nSession: {{3}}\nNew time: {{4}}\nNew venue: {{5}}\n\nWe apologise for any inconvenience.\n\n— Eventsync",
         example: {
           body_text: [["Priya Sharma", "Tech Summit 2026", "AI in Healthcare — Panel", "20 Jun 2026, 03:00 PM", "Hall B (changed from Hall A)"]],
         },
@@ -272,7 +272,7 @@ const TEMPLATES = [
     components: [
       {
         type: "BODY",
-        text: "New registration 📋\n\nEvent: *{{1}}*\nAttendee: {{2}}\nEmail: {{3}}\nTotal registrations: {{4}}\n\n— Event-Sync",
+        text: "New registration 📋\n\nEvent: *{{1}}*\nAttendee: {{2}}\nEmail: {{3}}\nTotal registrations: {{4}}\n\n— Eventsync",
         example: {
           body_text: [["Tech Summit 2026", "Priya Sharma", "priya@example.com", "142"]],
         },
@@ -298,7 +298,7 @@ const TEMPLATES = [
     components: [
       {
         type: "BODY",
-        text: "⚠️ Low wallet balance\n\nYour Event-Sync wallet balance is ₹{{1}}.\n\nRecharge now to avoid service interruptions for your upcoming events.\n\n— Event-Sync",
+        text: "⚠️ Low wallet balance\n\nYour Eventsync wallet balance is ₹{{1}}.\n\nRecharge now to avoid service interruptions for your upcoming events.\n\n— Eventsync",
         example: {
           body_text: [["249"]],
         },
@@ -324,7 +324,7 @@ const TEMPLATES = [
     components: [
       {
         type: "BODY",
-        text: "Hi {{1}},\n\nWallet recharged! ✅\n\nAmount added: ₹{{2}}\nNew balance: ₹{{3}}\nTransaction ID: {{4}}\n\nYou're all set to run your events.\n\n— Event-Sync",
+        text: "Hi {{1}},\n\nWallet recharged! ✅\n\nAmount added: ₹{{2}}\nNew balance: ₹{{3}}\nTransaction ID: {{4}}\n\nYou're all set to run your events.\n\n— Eventsync",
         example: {
           body_text: [["Ravi Kumar", "2000", "2499", "pay_QxR9sT1uVwXy"]],
         },
