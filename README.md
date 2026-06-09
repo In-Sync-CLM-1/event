@@ -41,13 +41,7 @@ Only values prefixed `VITE_` are inlined into the browser bundle. Anything that 
 
 ## Deploy — Frontend (Cloudflare Pages)
 
-The frontend ships directly from a local working tree using Wrangler. There is no GitHub Actions step for the frontend; pushing code does not deploy it.
-
-```powershell
-npm run build
-Set-Content -Path dist\_redirects -Value "/*  /index.html  200"
-wrangler pages deploy dist --project-name=Eventsync --branch=main
-```
+The frontend deploys automatically on every push to `main` via `.github/workflows/pages-deploy.yml` (build + publish to Cloudflare Pages). Pushing to `main` is the only deploy path — there is no manual Wrangler step.
 
 The Cloudflare Pages project is `Eventsync`, served at `https://Eventsync.pages.dev`. The custom domain `event.in-sync.co.in` points at it via a proxied CNAME on the `in-sync.co.in` zone.
 
