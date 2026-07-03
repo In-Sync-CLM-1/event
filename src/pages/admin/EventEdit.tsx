@@ -310,7 +310,7 @@ export default function EventEdit() {
                           <FormItem>
                             <FormLabel>City</FormLabel>
                             <FormControl>
-                              <Input placeholder="San Francisco" {...field} />
+                              <Input placeholder="Bengaluru" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>

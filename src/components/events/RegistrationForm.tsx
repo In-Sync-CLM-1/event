@@ -132,7 +132,7 @@ export function RegistrationForm({ eventId }: RegistrationFormProps) {
         <Label htmlFor="full_name">Full Name *</Label>
         <Input
           id="full_name"
-          placeholder="John Doe"
+          placeholder="Aarav Sharma"
           {...register('full_name')}
           className={errors.full_name ? 'border-destructive' : ''}
         />
@@ -160,7 +160,7 @@ export function RegistrationForm({ eventId }: RegistrationFormProps) {
         <Input
           id="phone"
           type="tel"
-          placeholder="+1 (555) 000-0000"
+          placeholder="+91 98765 43210"
           {...register('phone')}
           className={errors.phone ? 'border-destructive' : ''}
         />
@@ -173,7 +173,7 @@ export function RegistrationForm({ eventId }: RegistrationFormProps) {
         <Label htmlFor="company">Company</Label>
         <Input
           id="company"
-          placeholder="Acme Inc."
+          placeholder="NexaTech India"
           {...register('company')}
           className={errors.company ? 'border-destructive' : ''}
         />
@@ -186,7 +186,7 @@ export function RegistrationForm({ eventId }: RegistrationFormProps) {
         <Label htmlFor="designation">Designation</Label>
         <Input
           id="designation"
-          placeholder="Software Engineer"
+          placeholder="Product Manager"
           {...register('designation')}
           className={errors.designation ? 'border-destructive' : ''}
         />

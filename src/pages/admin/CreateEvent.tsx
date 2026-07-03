@@ -243,7 +243,7 @@ export default function CreateEvent() {
                 <Label htmlFor="address">Address</Label>
                 <Input
                   id="address"
-                  placeholder="123 Main Street"
+                  placeholder="MG Road, Indiranagar"
                   {...register('address')}
                 />
               </div>
@@ -252,7 +252,7 @@ export default function CreateEvent() {
                 <Label htmlFor="city">City</Label>
                 <Input
                   id="city"
-                  placeholder="San Francisco"
+                  placeholder="Bengaluru"
                   {...register('city')}
                 />
               </div>
