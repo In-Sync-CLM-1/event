@@ -158,28 +158,29 @@ export function useCreateRegistration() {
       const registration_number = generateRegistrationNumber();
       const qr_code = await generateQRCode(registration_number);
 
-      const { data, error } = await supabase
-        .from('registrations')
-        .insert({
-          event_id: input.event_id,
-          email: input.email.toLowerCase(),
-          full_name: input.full_name,
-          phone: input.phone,
-          company: input.company,
-          designation: input.designation,
-          linkedin_url: input.linkedin_url,
-          custom_fields: input.custom_fields || {},
-          user_id: input.user_id,
-          registration_number,
-          qr_code,
-          status: 'confirmed' as RegistrationStatus,
-          confirmed_at: new Date().toISOString(),
-        })
-        .select()
-        .single();
+      const row = {
+        event_id: input.event_id,
+        email: input.email.toLowerCase(),
+        full_name: input.full_name,
+        phone: input.phone,
+        company: input.company,
+        designation: input.designation,
+        linkedin_url: input.linkedin_url,
+        custom_fields: input.custom_fields || {},
+        user_id: input.user_id,
+        registration_number,
+        qr_code,
+        status: 'confirmed' as RegistrationStatus,
+        confirmed_at: new Date().toISOString(),
+      };
+
+      // No RETURNING (.select()) here: guests can INSERT but RLS blocks them
+      // from reading rows back, which fails the whole insert. Everything the
+      // UI needs (number + QR) is generated client-side above.
+      const { error } = await supabase.from('registrations').insert(row);
 
       if (error) throw error;
-      return data as Registration;
+      return row as unknown as Registration;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['registrations', data.event_id] });
