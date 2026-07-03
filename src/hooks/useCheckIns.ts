@@ -64,6 +64,7 @@ export function useCheckInStats(eventId: string | undefined) {
         .from('check_ins')
         .select('*', { count: 'exact', head: true })
         .eq('event_id', eventId)
+        .is('session_id', null)
         .gte('check_in_time', today.toISOString());
 
       return {

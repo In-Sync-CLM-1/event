@@ -4,9 +4,37 @@ import { AdminLayout } from '@/components/layout/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useEvents } from '@/hooks/useEvents';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+
+function useGlobalStats() {
+  return useQuery({
+    queryKey: ['admin', 'global-stats'],
+    queryFn: async () => {
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+      const [regs, todays] = await Promise.all([
+        supabase
+          .from('registrations')
+          .select('*', { count: 'exact', head: true })
+          .in('status', ['confirmed', 'checked_in']),
+        supabase
+          .from('check_ins')
+          .select('*', { count: 'exact', head: true })
+          .is('session_id', null)
+          .gte('check_in_time', todayStart.toISOString()),
+      ]);
+      return {
+        totalRegistrations: regs.count || 0,
+        checkInsToday: todays.count || 0,
+      };
+    },
+  });
+}
 
 export default function AdminDashboard() {
   const { data: events, isLoading } = useEvents();
+  const { data: globalStats } = useGlobalStats();
 
   // Calculate stats
   const totalEvents = events?.length || 0;
@@ -32,14 +60,14 @@ export default function AdminDashboard() {
     },
     {
       title: 'Total Registrations',
-      value: '—',
+      value: globalStats ? globalStats.totalRegistrations.toLocaleString() : '—',
       icon: Users,
       description: 'Across all events',
       href: '/admin/registrations',
     },
     {
       title: 'Check-ins Today',
-      value: '—',
+      value: globalStats ? globalStats.checkInsToday.toLocaleString() : '—',
       icon: QrCode,
       description: 'Real-time tracking',
       href: '/admin/check-in',
