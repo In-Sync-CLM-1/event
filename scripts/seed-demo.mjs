@@ -2,7 +2,18 @@
 // Idempotent: wipes and re-creates demo users/org/event/data each run.
 // Usage: node scripts/seed-demo.mjs
 import { createClient } from '@supabase/supabase-js';
+import { readFileSync } from 'fs';
 import { loadEnv } from './lib/env.mjs';
+
+// AI-generated headshots (scripts/gen-headshots.mjs) embedded as data URIs
+const headshot = (key) => {
+  try {
+    return 'data:image/jpeg;base64,' +
+      readFileSync(new URL(`./assets/speakers/${key}.jpg`, import.meta.url)).toString('base64');
+  } catch {
+    return null;
+  }
+};
 
 const env = loadEnv(new URL('../.env', import.meta.url));
 const sb = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, {
@@ -78,6 +89,7 @@ if (oldEvents?.length) {
   for (const tbl of [
     'engagement_scores','content_library','reward_claims','rewards','badge_awards','badges',
     'points_log','attendee_schedules','meeting_requests','meeting_bookings',
+    'event_reminders','event_reminder_settings',
     'check_ins','certificates','registrations','meeting_slots','session_speakers',
     'sessions','speakers','meeting_spots','landing_pages',
   ]) {
@@ -129,6 +141,7 @@ const { data: eventRow, error: evErr } = await sb.from('events').insert({
   registration_deadline: TODAY_REGDL,
   max_capacity:          300,
   mode:                  'in_person',
+  event_type:            'conference',
   status:                'published',
   banner_url:            'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1600&q=80&auto=format&fit=crop',
   created_by:            userIds.rahul,
@@ -146,7 +159,7 @@ const { data: speakerRows } = await sb.from('speakers').insert([
     title:      'Chief Product Officer',
     company:    'FinVault',
     bio:        'Shreya leads product strategy at FinVault, scaling the payments stack from ₹1K Cr to ₹5L Cr GMV. She is known for her zero-to-one thinking on fintech UX and building product orgs that ship.',
-    photo_url:  null,
+    photo_url:  headshot('shreya'),
     social_links: { linkedin: 'https://linkedin.com/in/shreya-agarwal' },
     sort_order: 1,
   },
@@ -156,7 +169,7 @@ const { data: speakerRows } = await sb.from('speakers').insert([
     title:      'Co-Founder & CTO',
     company:    'WealthBridge',
     bio:        'Karan built WealthBridge\'s engineering from 3 to 300 people and took the platform to 50M+ investors. His talk on "Building for Bharat" has become required reading across Indian fintech circles.',
-    photo_url:  null,
+    photo_url:  headshot('karan'),
     social_links: { linkedin: 'https://linkedin.com/in/karan-bajaj' },
     sort_order: 2,
   },
@@ -166,7 +179,7 @@ const { data: speakerRows } = await sb.from('speakers').insert([
     title:      'Chief Design Officer',
     company:    'TrustScore',
     bio:        'Award-winning CDO behind TrustScore\'s cult-status app experience. Previously a design lead at a global search giant. Speaks about craft, obsession, and why delight is a C-suite strategy, not a design-team afterthought.',
-    photo_url:  null,
+    photo_url:  headshot('nandini'),
     social_links: { linkedin: 'https://linkedin.com/in/nandini-rao' },
     sort_order: 3,
   },
@@ -176,7 +189,7 @@ const { data: speakerRows } = await sb.from('speakers').insert([
     title:      'Chief Revenue Officer',
     company:    'ShopLocal',
     bio:        'Aarav drove ShopLocal\'s 100x GMV era as CRO. He brings a data-first lens to every revenue decision and a healthy scepticism of vanity metrics that don\'t compound.',
-    photo_url:  null,
+    photo_url:  headshot('aarav'),
     social_links: { linkedin: 'https://linkedin.com/in/aarav-singh' },
     sort_order: 4,
   },
@@ -620,6 +633,61 @@ for (let ofs = 0; ofs < scoreRows.length; ofs += 200) {
   if (esErr) throw new Error(`engagement insert @${ofs}: ${esErr.message}`);
 }
 console.log(`  ${scoreRows.length} engagement scores created`);
+
+// ── reminder loop: settings + a realistic sent log ────────────────────────────
+console.log('Creating reminder loop demo data...');
+await sb.from('event_reminder_settings').insert({
+  event_id:             EVENT_ID,
+  whatsapp_enabled:     true,
+  calls_enabled:        true,
+  remind_day_before:    true,
+  remind_event_morning: true,
+  bolna_agent_id:       env.EVENTSYNC_REMINDER_AGENT_ID || null,
+}); // safe;
+
+// WhatsApp wave — yesterday 5 PM, everyone confirmed at that point (290 of 300)
+const allRegIds = [...Object.values(regIds), ...crowdIds.map(r => r.id)];
+const waWave = allRegIds.slice(0, 290).map((rid, i) => ({
+  event_id:        EVENT_ID,
+  registration_id: rid,
+  channel:         'whatsapp',
+  kind:            'day_before',
+  status:          'delivered',
+  detail:          { sid: `demo-wa-${i}`, http: 202 },
+  created_at:      daysFromNow(-1, 17, Math.floor(i / 15)),
+}));
+
+// AI call wave — event morning, the 42 still-unconfirmed; outcomes logged
+const CALL_OUTCOMES = [
+  ...Array(27).fill(['completed', 'Confirmed — will attend', 38]),
+  ...Array(6).fill(['completed', 'Unsure — will decide today', 52]),
+  ...Array(6).fill(['no_answer', null, 0]),
+  ...Array(3).fill(['completed', 'Callback requested', 41]),
+];
+const callTargets = [regIds.meena, ...shuffled(crowdIds.filter(r => r.status === 'checked_in')).slice(0, 41).map(r => r.id)];
+const callWave = callTargets.map((rid, i) => {
+  const [status, outcome, dur] = i === 0
+    ? ['completed', 'Confirmed — will attend', 34]   // Meena — named in the narration
+    : CALL_OUTCOMES[(i - 1) % CALL_OUTCOMES.length];
+  return {
+    event_id:        EVENT_ID,
+    registration_id: rid,
+    channel:         'ai_call',
+    kind:            'event_morning',
+    status,
+    outcome,
+    detail:          { execution_id: `demo-exec-${i}`, conversation_duration: dur },
+    created_at:      daysFromNow(0, 9, (i * 43) % 40),
+  };
+});
+
+for (const chunk of [waWave, callWave]) {
+  for (let ofs = 0; ofs < chunk.length; ofs += 200) {
+    const { error: rErr } = await sb.from('event_reminders').insert(chunk.slice(ofs, ofs + 200));
+    if (rErr) throw new Error(`event_reminders insert @${ofs}: ${rErr.message}`);
+  }
+}
+console.log(`  ${waWave.length} WhatsApp + ${callWave.length} AI-call reminder rows`);
 
 // ── meeting spots ─────────────────────────────────────────────────────────────
 console.log('Creating meeting spots...');

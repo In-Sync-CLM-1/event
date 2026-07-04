@@ -32,3 +32,4 @@ dist-ssr
 *.sw?
 supabase/.temp/
 scripts/recordings/
+scripts/assets/speakers/*.png

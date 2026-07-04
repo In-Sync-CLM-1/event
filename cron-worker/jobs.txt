@@ -1,0 +1,2 @@
+reminders-daybefore|send-event-reminders|{"kind":"day_before"}|30 11 * * *
+reminders-morning|send-event-reminders|{"kind":"event_morning"}|30 3 * * *

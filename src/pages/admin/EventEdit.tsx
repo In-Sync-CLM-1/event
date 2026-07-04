@@ -16,6 +16,7 @@ import {
   ExternalLink,
   LayoutTemplate,
   MapPin,
+  BellRing,
 } from 'lucide-react';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { Button } from '@/components/ui/button';
@@ -198,7 +199,7 @@ export default function EventEdit() {
         </div>
 
         <Tabs defaultValue="details" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6 lg:w-auto lg:inline-grid">
+          <TabsList className="grid w-full grid-cols-7 lg:w-auto lg:inline-grid">
             <TabsTrigger value="details" className="gap-2">
               <Calendar className="h-4 w-4 hidden sm:inline" />
               Details
@@ -231,6 +232,10 @@ export default function EventEdit() {
             <TabsTrigger value="registrations" className="gap-2">
               <Users className="h-4 w-4 hidden sm:inline" />
               Attendees
+            </TabsTrigger>
+            <TabsTrigger value="reminders" className="gap-2">
+              <BellRing className="h-4 w-4 hidden sm:inline" />
+              Reminders
             </TabsTrigger>
           </TabsList>
 
@@ -594,6 +599,31 @@ export default function EventEdit() {
                   <Button asChild>
                     <Link to={`/admin/events/${eventId}/speakers`}>
                       Manage Speakers
+                    </Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Reminders Tab */}
+          <TabsContent value="reminders">
+            <Card>
+              <CardHeader>
+                <CardTitle>Reminders</CardTitle>
+                <CardDescription>
+                  WhatsApp reminders and AI reminder calls for confirmed attendees
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col items-center justify-center py-10">
+                  <BellRing className="h-12 w-12 text-muted-foreground mb-4" />
+                  <p className="text-muted-foreground mb-4">
+                    Automate the reminder loop — day before and event morning
+                  </p>
+                  <Button asChild>
+                    <Link to={`/admin/events/${eventId}/reminders`}>
+                      Manage Reminders
                     </Link>
                   </Button>
                 </div>

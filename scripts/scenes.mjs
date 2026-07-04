@@ -1,5 +1,6 @@
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { mkdirSync } from 'fs';
 import { BASE, ORG, EVENT_ID, CERT_NUMBER } from './lib/app.mjs';
 import { ACCT } from './lib/scene.mjs';
 import {
@@ -71,7 +72,7 @@ export const SCENE_MAP = {
   's0-open': {
     name: 's0-open',
     account: ACCT.guest,
-    narration: 'Most events are still organized with a spreadsheet, a WhatsApp group, and a prayer. Attendee data lives in email threads. Check-in means printed lists and a marker at the door. After it is over, nobody knows what worked. This is Eventsync — built for the people who care too much about their events to run them that way.',
+    narration: 'Most events are still organized with a spreadsheet, a WhatsApp group, and a prayer. Attendee details live in email threads. Check-in means printed lists and a marker at the door. After it is over, nobody knows what worked. This is Eventsync — built for the people who care too much about their events to run them that way.',
     beats: async ({ page, D, ready }) => {
       await titleCard(page, {
         kicker: 'Eventsync · Event Management Platform',
@@ -123,7 +124,7 @@ export const SCENE_MAP = {
   's2-create-event': {
     name: 's2-create-event',
     account: ACCT.admin,
-    narration: 'Building a new event takes one form. Title, dates, venue — the URL slug writes itself from the title. The format selector opens a virtual join URL field the moment you choose Hybrid or Virtual, so the same workflow covers in-person, fully online, and hybrid events. Set the capacity, the registration deadline, flip the status to Published, and the event is live for registrations in under two minutes.',
+    narration: 'Building a new event takes one form. Title, dates, venue — the URL slug writes itself from the title. Pick the event type — conference, trade fair, roadshow, workshop, or product launch — Eventsync runs offline events as naturally as online ones. And the format selector opens a virtual join URL field the moment you choose Hybrid or Virtual. Set the capacity, the registration deadline, flip the status to Published, and the event is live for registrations in under two minutes.',
     beats: async ({ page, at, D, ready }) => {
       await page.goto(`${BASE}/admin/events/new`, { waitUntil: 'networkidle' });
       await waitText(page, 'Create Event');
@@ -136,17 +137,31 @@ export const SCENE_MAP = {
       await titleInput.fill('Innovation Conclave 2027');
       await page.waitForTimeout(600);
       const r1 = await ring(page, page.locator('#slug'), { label: 'Slug auto-generates from title', below: true });
-      await waitUntil(at('format selector', 9, -0.2));
+      await waitUntil(at('event type', 8, -0.2));
       if (r1) await removeAnn(page, r1);
-      // Show format dropdown
-      const formatTrigger = page.getByRole('combobox').first();
+      // Event type: conference / trade fair / roadshow / workshop / product launch
+      const typeTrigger = page.locator('#event_type');
+      await typeTrigger.scrollIntoViewIfNeeded().catch(() => {});
+      await moveToLocator(page, typeTrigger, 700);
+      await typeTrigger.click();
+      await page.waitForTimeout(400);
+      const tradeFairOption = page.getByRole('option', { name: /trade fair/i });
+      await tradeFairOption.waitFor({ timeout: 8000 });
+      const rT = await ring(page, tradeFairOption, { label: 'Offline formats: trade fairs, roadshows, workshops', below: true });
+      await waitUntil(at('product launch', 12, -0.2));
+      if (rT) await removeAnn(page, rT);
+      await page.getByRole('option', { name: /^conference$/i }).click().catch(() => tradeFairOption.click());
+      await page.waitForTimeout(400);
+      await waitUntil(at('format selector', 15, -0.2));
+      // Show format dropdown (second combobox — event type is the first)
+      const formatTrigger = page.getByRole('combobox').nth(1);
       await moveToLocator(page, formatTrigger, 700);
       await formatTrigger.click();
       await page.waitForTimeout(400);
       const hybridOption = page.getByRole('option', { name: /hybrid/i });
       await hybridOption.waitFor({ timeout: 8000 });
       const r2 = await ring(page, hybridOption, { label: 'Hybrid: in-person + online', below: true });
-      await waitUntil(at('join URL', 13, -0.2));
+      await waitUntil(at('join URL', 18, -0.2));
       if (r2) await removeAnn(page, r2);
       await hybridOption.click();
       await page.waitForTimeout(500);
@@ -238,12 +253,20 @@ export const SCENE_MAP = {
       await spaNav(page, `/admin/events/${EVENT_ID}/speakers`, 'Shreya Agarwal');
       await page.waitForTimeout(800);
       const cap2 = await caption(page, 'Speaker profiles — bio, photo, LinkedIn, company');
-      await waitUntil(at('LinkedIn', 22, -0.2));
-      const shreya = page.getByText('Shreya Agarwal').first();
-      await zoomTo(page, shreya, 1.3, 900);
-      const r3 = await ring(page, shreya, { label: 'CPO, FinVault — Keynote + Closing' });
-      await waitUntil(D - 1.0);
+      // Highlight exactly who the narration names, when it names them
+      await waitUntil(at('Nandini Rao', 22, -0.2));
+      const nandini = page.getByText('Nandini Rao').first();
+      await zoomTo(page, nandini, 1.25, 900);
+      const r3 = await ring(page, nandini, { label: 'Chief Design Officer, TrustScore' });
+      await waitUntil(at('Aarav Singh', 26, -0.2));
       if (r3) await removeAnn(page, r3);
+      await zoomReset(page, 500);
+      const aarav = page.getByText('Aarav Singh').first();
+      await aarav.scrollIntoViewIfNeeded().catch(() => {});
+      await zoomTo(page, aarav, 1.25, 900);
+      const r4 = await ring(page, aarav, { label: 'Chief Revenue Officer, ShopLocal' });
+      await waitUntil(D - 1.0);
+      if (r4) await removeAnn(page, r4);
       await zoomReset(page, 600);
       await removeCaption(page, cap2);
       await waitUntil(D);
@@ -338,6 +361,71 @@ export const SCENE_MAP = {
       await waitUntil(D - 1.0);
       if (r2) await removeAnn(page, r2);
       await removeCaption(page, cap);
+      await waitUntil(D);
+    },
+  },
+
+  // ── 6b. REMINDER LOOP (WhatsApp + AI calls) ──────────────────────────────
+  's6b-reminders': {
+    name: 's6b-reminders',
+    account: ACCT.admin,
+    narration: 'Registration is only half the job — people forget to show up. Eventsync closes that loop on its own. Every confirmed attendee gets a WhatsApp reminder the day before, with the date, the venue, and their registration number. And on event morning, an AI voice agent named Riya calls the ones still unconfirmed, politely checks if they are coming, and logs every outcome. Rahul flips the toggles once — the platform does the rest. Nearly three hundred WhatsApp reminders delivered, forty-two calls this morning, and Meena confirmed on the call before her first coffee. That is how seventy-two percent walk through the door.',
+    beats: async ({ page, at, D, ready }) => {
+      await page.goto(`${BASE}/admin/events/${EVENT_ID}/reminders`, { waitUntil: 'networkidle' });
+      await waitText(page, 'Reminder Loop');
+      await page.getByText(/WhatsApp Reminders/i).first().waitFor({ timeout: 15000 }).catch(() => {});
+      const waitUntil = await ready(1400);
+      const cap = await caption(page, 'Reminder loop — WhatsApp + AI calls, fully automatic');
+      await waitUntil(at('closes that loop', 5, -0.2));
+      // WhatsApp toggle + a real-looking message card
+      const waToggle = page.getByText('WhatsApp reminders', { exact: false }).first();
+      const r1 = await ring(page, waToggle, { label: 'Day before, every confirmed attendee' });
+      await waitUntil(at('registration number', 12, -0.2));
+      // Render the WhatsApp bubble as a notification card
+      mkdirSync(notifDir, { recursive: true });
+      const waPng = join(notifDir, 'wa-reminder.png');
+      const cardPage = await page.context().newPage();
+      await cardPage.setViewportSize({ width: 380, height: 240 });
+      await cardPage.setContent(`<!doctype html><html><head><meta charset="utf-8"><style>
+        body{margin:0;font-family:'Segoe UI',sans-serif;background:#0b141a;padding:14px}
+        .bubble{background:#1f2c33;border-radius:0 12px 12px 12px;padding:12px 14px;color:#e9edef;font-size:13.5px;line-height:1.45;max-width:340px}
+        .bubble b{color:#fff}
+        .time{color:#8696a0;font-size:11px;text-align:right;margin-top:6px}
+      </style></head><body>
+        <div class="bubble">Hi <b>Meena</b>, this is a reminder for <b>Product Summit 2026</b> on <b>${new Date().toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })}, 8:00 AM</b> at <b>NIMHANS Convention Centre, Bengaluru</b>. Your registration number is <b>PS2026-0005</b>. Show your QR code at the check-in desk to walk straight in. See you there!
+          <div class="time">5:02 PM ✓✓</div>
+        </div>
+      </body></html>`);
+      await cardPage.waitForTimeout(300);
+      await cardPage.screenshot({ path: waPng });
+      await cardPage.close();
+      const cardId = await showCard(page, waPng, { label: 'WhatsApp · Eventsync', accent: '#25D366', top: 90, width: 330 });
+      await waitUntil(at('AI voice agent', 16, -0.2));
+      if (r1) await removeAnn(page, r1);
+      await hideCard(page, cardId);
+      const callToggle = page.getByText('AI reminder calls', { exact: false }).first();
+      const r2 = await ring(page, callToggle, { label: 'Riya calls the unconfirmed — outcome logged' });
+      await waitUntil(at('flips the toggles', 22, -0.2));
+      if (r2) await removeAnn(page, r2);
+      // Stats row
+      const statCard = page.getByText('WhatsApp Reminders', { exact: false }).first();
+      const r3 = await ring(page, statCard, { label: 'The whole wave, logged' }).catch(() => null);
+      await waitUntil(at('forty-two calls', 26, -0.2));
+      if (r3) await removeAnn(page, r3);
+      await removeCaption(page, cap);
+      // Scroll to the log and ring Meena's confirmed call
+      const cap2 = await caption(page, 'Every reminder, every call outcome — one log');
+      await page.getByText('Reminder Log', { exact: false }).first().scrollIntoViewIfNeeded().catch(() => {});
+      await page.waitForTimeout(600);
+      await waitUntil(at('Meena confirmed', 29, -0.2));
+      const meenaRow = page.getByText('Meena Pillai').first();
+      await meenaRow.scrollIntoViewIfNeeded().catch(() => {});
+      await zoomTo(page, meenaRow, 1.2, 800);
+      const r4 = await ring(page, meenaRow, { label: 'AI call · Confirmed — will attend', below: true }).catch(() => null);
+      await waitUntil(D - 1.2);
+      if (r4) await removeAnn(page, r4);
+      await zoomReset(page, 600);
+      await removeCaption(page, cap2);
       await waitUntil(D);
     },
   },
@@ -471,11 +559,13 @@ export const SCENE_MAP = {
       await waitUntil(at('badges panel', 12, -0.2));
       if (r1) await removeAnn(page, r1);
       await zoomReset(page, 600);
-      // Switch to badges tab
-      const badgesTab = page.getByRole('button', { name: /badge/i }).first()
-        .or(page.getByText('Badges').first());
+      // Switch to badges tab and WAIT for its content before narrating over it
+      const badgesTab = page.getByRole('tab', { name: /badge/i }).first()
+        .or(page.getByRole('button', { name: /badge/i }).first())
+        .or(page.getByText('Badges', { exact: true }).first());
       await clickLocator(page, badgesTab, { dur: 600 }).catch(() => {});
-      await page.waitForTimeout(700);
+      await page.getByText('Early Bird', { exact: false }).first().waitFor({ timeout: 10000 }).catch(() => {});
+      await page.waitForTimeout(400);
       await removeCaption(page, cap);
       const cap2 = await caption(page, 'Badges — define the behaviour you want to reward');
       await waitUntil(at('Session Champion', 17, -0.2));
@@ -483,14 +573,20 @@ export const SCENE_MAP = {
       const r2 = await ring(page, networkBadge, { label: 'Networker — connects with 5+ attendees' }).catch(() => null);
       await waitUntil(at('rewards panel', 21, -0.2));
       if (r2) await removeAnn(page, r2);
-      // Switch to rewards tab
-      const rewardsTab = page.getByRole('button', { name: /reward/i }).first()
-        .or(page.getByText('Rewards').first());
+      // Switch to rewards tab and WAIT for its content — the old cut narrated
+      // the rewards panel while the leaderboard was still on screen
+      const rewardsTab = page.getByRole('tab', { name: /reward/i }).first()
+        .or(page.getByRole('button', { name: /reward/i }).first())
+        .or(page.getByText('Rewards', { exact: true }).first());
       await clickLocator(page, rewardsTab, { dur: 600 }).catch(() => {});
-      await page.waitForTimeout(700);
+      await page.getByText(/VIP After-Party/i).first().waitFor({ timeout: 10000 }).catch(() => {});
+      await page.waitForTimeout(400);
       await removeCaption(page, cap2);
       const cap3 = await caption(page, 'Rewards — real outcomes tied to engagement points');
+      const bookBundle = page.getByText(/Speaker Book Bundle/i).first();
+      const rB = await ring(page, bookBundle, { label: '300 pts — signed book bundle' }).catch(() => null);
       await waitUntil(at('after-party pass', 26, -0.2));
+      if (rB) await removeAnn(page, rB);
       const vipReward = page.getByText(/VIP After-Party/i).first();
       const r3 = await ring(page, vipReward, { label: '500 pts — VIP after-party pass' }).catch(() => null);
       await waitUntil(D - 1.0);
@@ -681,6 +777,7 @@ export const SCENE_MAP = {
         body: 'One platform. Every feature you need to run events that people talk about — and numbers that tell you why.',
         stats: [
           { label: 'Custom landing pages',     value: 'Built, not coded' },
+          { label: 'Reminder loop',            value: 'WhatsApp + AI calls' },
           { label: 'Check-in',                 value: 'QR + manual' },
           { label: 'Certificates',             value: 'Bulk · verified' },
           { label: 'Engagement intelligence',  value: 'Hot → Passive' },
@@ -704,6 +801,7 @@ const ORDER = [
   's4-sessions-speakers',
   's5-attendee-event',
   's6-registration',
+  's6b-reminders',
   's7-checkin',
   's8-certificates',
   's9-gamification',

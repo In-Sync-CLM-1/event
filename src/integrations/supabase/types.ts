@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.1"
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
@@ -132,6 +132,78 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      billing_accounts: {
+        Row: {
+          balance: number
+          created_at: string
+          id: string
+          plan: string
+          total_credited: number
+          total_debited: number
+          trial_events_used: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          created_at?: string
+          id?: string
+          plan?: string
+          total_credited?: number
+          total_debited?: number
+          trial_events_used?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          created_at?: string
+          id?: string
+          plan?: string
+          total_credited?: number
+          total_debited?: number
+          trial_events_used?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      billing_transactions: {
+        Row: {
+          amount: number
+          balance_after: number
+          category: string
+          created_at: string
+          description: string
+          id: string
+          reference_id: string | null
+          type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          balance_after: number
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          reference_id?: string | null
+          type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          balance_after?: number
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          reference_id?: string | null
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       certificate_templates: {
         Row: {
@@ -520,6 +592,101 @@ export type Database = {
           },
         ]
       }
+      event_reminder_settings: {
+        Row: {
+          bolna_agent_id: string | null
+          call_script: string | null
+          calls_enabled: boolean
+          event_id: string
+          remind_day_before: boolean
+          remind_event_morning: boolean
+          updated_at: string
+          whatsapp_enabled: boolean
+        }
+        Insert: {
+          bolna_agent_id?: string | null
+          call_script?: string | null
+          calls_enabled?: boolean
+          event_id: string
+          remind_day_before?: boolean
+          remind_event_morning?: boolean
+          updated_at?: string
+          whatsapp_enabled?: boolean
+        }
+        Update: {
+          bolna_agent_id?: string | null
+          call_script?: string | null
+          calls_enabled?: boolean
+          event_id?: string
+          remind_day_before?: boolean
+          remind_event_morning?: boolean
+          updated_at?: string
+          whatsapp_enabled?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_reminder_settings_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: true
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_reminders: {
+        Row: {
+          channel: string
+          created_at: string
+          detail: Json
+          event_id: string
+          id: string
+          kind: string
+          outcome: string | null
+          registration_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          channel: string
+          created_at?: string
+          detail?: Json
+          event_id: string
+          id?: string
+          kind: string
+          outcome?: string | null
+          registration_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          channel?: string
+          created_at?: string
+          detail?: Json
+          event_id?: string
+          id?: string
+          kind?: string
+          outcome?: string | null
+          registration_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_reminders_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_reminders_registration_id_fkey"
+            columns: ["registration_id"]
+            isOneToOne: false
+            referencedRelation: "registrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       events: {
         Row: {
           address: string | null
@@ -529,9 +696,11 @@ export type Database = {
           created_by: string | null
           description: string | null
           end_date: string
+          event_type: string | null
           id: string
           logo_url: string | null
           max_capacity: number | null
+          mode: string
           registration_deadline: string | null
           settings: Json | null
           slug: string
@@ -540,6 +709,7 @@ export type Database = {
           title: string
           updated_at: string
           venue: string | null
+          virtual_join_url: string | null
         }
         Insert: {
           address?: string | null
@@ -549,9 +719,11 @@ export type Database = {
           created_by?: string | null
           description?: string | null
           end_date: string
+          event_type?: string | null
           id?: string
           logo_url?: string | null
           max_capacity?: number | null
+          mode?: string
           registration_deadline?: string | null
           settings?: Json | null
           slug: string
@@ -560,6 +732,7 @@ export type Database = {
           title: string
           updated_at?: string
           venue?: string | null
+          virtual_join_url?: string | null
         }
         Update: {
           address?: string | null
@@ -569,9 +742,11 @@ export type Database = {
           created_by?: string | null
           description?: string | null
           end_date?: string
+          event_type?: string | null
           id?: string
           logo_url?: string | null
           max_capacity?: number | null
+          mode?: string
           registration_deadline?: string | null
           settings?: Json | null
           slug?: string
@@ -580,6 +755,7 @@ export type Database = {
           title?: string
           updated_at?: string
           venue?: string | null
+          virtual_join_url?: string | null
         }
         Relationships: []
       }
@@ -1223,6 +1399,7 @@ export type Database = {
           title: string
           track: string | null
           updated_at: string
+          virtual_join_url: string | null
         }
         Insert: {
           created_at?: string
@@ -1237,6 +1414,7 @@ export type Database = {
           title: string
           track?: string | null
           updated_at?: string
+          virtual_join_url?: string | null
         }
         Update: {
           created_at?: string
@@ -1251,6 +1429,7 @@ export type Database = {
           title?: string
           track?: string | null
           updated_at?: string
+          virtual_join_url?: string | null
         }
         Relationships: [
           {
@@ -1383,6 +1562,26 @@ export type Database = {
     }
     Functions: {
       auth_email: { Args: never; Returns: string }
+      credit_wallet: {
+        Args: {
+          _amount: number
+          _category: string
+          _description: string
+          _reference_id?: string
+          _user_id: string
+        }
+        Returns: number
+      }
+      debit_wallet: {
+        Args: {
+          _amount: number
+          _category: string
+          _description: string
+          _reference_id?: string
+          _user_id: string
+        }
+        Returns: number
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1394,6 +1593,8 @@ export type Database = {
         Args: { _event_id: string; _user_id: string }
         Returns: boolean
       }
+      is_platform_admin: { Args: { _user_id: string }; Returns: boolean }
+      user_has_event_registration: { Args: { ev_id: string }; Returns: boolean }
     }
     Enums: {
       app_role:
@@ -1402,6 +1603,7 @@ export type Database = {
         | "staff"
         | "attendee"
         | "sales_rep"
+        | "platform_admin"
       event_status: "draft" | "published" | "cancelled" | "completed"
       registration_status:
         | "pending"
@@ -1542,6 +1744,7 @@ export const Constants = {
         "staff",
         "attendee",
         "sales_rep",
+        "platform_admin",
       ],
       event_status: ["draft", "published", "cancelled", "completed"],
       registration_status: [

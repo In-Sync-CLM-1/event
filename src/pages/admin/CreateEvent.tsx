@@ -27,9 +27,20 @@ const eventSchema = z.object({
   registration_deadline: z.string().optional(),
   max_capacity: z.coerce.number().min(0).max(100000).optional(),
   mode: z.enum(['in_person', 'virtual', 'hybrid']),
+  event_type: z.enum(['conference', 'trade_fair', 'roadshow', 'workshop', 'meetup', 'product_launch', 'webinar']).optional(),
   virtual_join_url: z.string().url('Must be a valid URL').optional().or(z.literal('')),
   status: z.enum(['draft', 'published']),
 });
+
+const EVENT_TYPES: Array<{ value: string; label: string }> = [
+  { value: 'conference', label: 'Conference' },
+  { value: 'trade_fair', label: 'Trade Fair / Exhibition' },
+  { value: 'roadshow', label: 'Roadshow' },
+  { value: 'workshop', label: 'Workshop / Training' },
+  { value: 'meetup', label: 'Meetup / Networking' },
+  { value: 'product_launch', label: 'Product Launch' },
+  { value: 'webinar', label: 'Webinar' },
+];
 
 type EventFormData = z.infer<typeof eventSchema>;
 
@@ -77,6 +88,7 @@ export default function CreateEvent() {
         city: data.city,
         status: data.status,
         mode: data.mode,
+        event_type: data.event_type || undefined,
         virtual_join_url: data.virtual_join_url || undefined,
         start_date: new Date(data.start_date).toISOString(),
         end_date: new Date(data.end_date).toISOString(),
@@ -266,6 +278,20 @@ export default function CreateEvent() {
               <CardDescription>Is this event in-person, virtual, or hybrid?</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="event_type">Event Type</Label>
+                <Select onValueChange={(v) => setValue('event_type', v as EventFormData['event_type'])}>
+                  <SelectTrigger id="event_type">
+                    <SelectValue placeholder="Conference, trade fair, roadshow..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {EVENT_TYPES.map((t) => (
+                      <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="mode">Format</Label>
                 <Select

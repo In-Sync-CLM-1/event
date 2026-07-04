@@ -1,1 +1,5 @@
 project_id = "gwfofzqrfpwojejjodgz"
+
+[functions.bolna-event-webhook]
+# Bolna posts call results here — no Supabase JWT available
+verify_jwt = false

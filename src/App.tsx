@@ -28,6 +28,7 @@ import AdminDashboard from "./pages/admin/Dashboard";
 import AdminEvents from "./pages/admin/Events";
 import CreateEvent from "./pages/admin/CreateEvent";
 import EventEdit from "./pages/admin/EventEdit";
+import Reminders from "./pages/admin/Reminders";
 import AdminSessions from "./pages/admin/Sessions";
 import AdminSpeakers from "./pages/admin/Speakers";
 import CheckIn from "./pages/admin/CheckIn";
@@ -85,6 +86,7 @@ const App = () => (
             <Route path="/admin/events/new" element={<ProtectedRoute allowedRoles={[...adminRoles]}><CreateEvent /></ProtectedRoute>} />
             <Route path="/admin/events/:eventId" element={<ProtectedRoute allowedRoles={[...adminRoles]}><EventEdit /></ProtectedRoute>} />
             <Route path="/admin/events/:eventId/sessions" element={<ProtectedRoute allowedRoles={[...adminRoles]}><AdminSessions /></ProtectedRoute>} />
+            <Route path="/admin/events/:eventId/reminders" element={<ProtectedRoute allowedRoles={[...adminRoles]}><Reminders /></ProtectedRoute>} />
             <Route path="/admin/events/:eventId/landing" element={<ProtectedRoute allowedRoles={[...adminRoles]}><LandingPageAdmin /></ProtectedRoute>} />
             <Route path="/admin/events/:eventId/speakers" element={<ProtectedRoute allowedRoles={[...adminRoles]}><AdminSpeakers /></ProtectedRoute>} />
             <Route path="/admin/events/:eventId/certificates" element={<ProtectedRoute allowedRoles={[...adminRoles]}><AdminCertificates /></ProtectedRoute>} />
