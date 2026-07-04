@@ -135,9 +135,31 @@ export default function Reminders() {
     onError: (e: Error) => toast({ title: 'Dispatch failed', description: e.message, variant: 'destructive' }),
   });
 
-  const waCount = log?.filter((l) => l.channel === 'whatsapp' && l.status !== 'failed').length || 0;
-  const callCount = log?.filter((l) => l.channel === 'ai_call').length || 0;
-  const confirmedCount = log?.filter((l) => l.outcome?.toLowerCase().startsWith('confirmed')).length || 0;
+  // Counted server-side — the log list below is capped at 200 rows
+  const { data: stats } = useQuery({
+    queryKey: ['event-reminder-stats', eventId],
+    queryFn: async () => {
+      const base = () => supabase
+        .from('event_reminders')
+        .select('*', { count: 'exact', head: true })
+        .eq('event_id', eventId!);
+      const [wa, calls, confirmed] = await Promise.all([
+        base().eq('channel', 'whatsapp').neq('status', 'failed'),
+        base().eq('channel', 'ai_call'),
+        base().ilike('outcome', 'confirmed%'),
+      ]);
+      return {
+        wa: wa.count || 0,
+        calls: calls.count || 0,
+        confirmed: confirmed.count || 0,
+      };
+    },
+    enabled: !!eventId,
+    refetchInterval: 30000,
+  });
+  const waCount = stats?.wa || 0;
+  const callCount = stats?.calls || 0;
+  const confirmedCount = stats?.confirmed || 0;
 
   const statusBadge = (status: string) => {
     switch (status) {
