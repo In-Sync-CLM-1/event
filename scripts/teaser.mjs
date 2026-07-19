@@ -1,9 +1,14 @@
-// 60-second teaser cut — hook, five fast proof moments, close.
-// Rendered by render-teaser.mjs against the already-seeded demo state.
+// EventSync teaser — v2 "1 main + 3 subsets" (approved storytelling standard).
+//   MAIN    — EventSync runs the chase around your event; your team runs the event.
+//   SUBSET 1 — confirmations run themselves (WhatsApp + AI calls → real numbers)
+//   SUBSET 2 — event day is instant (QR check-in < 1s, live attendance)
+//   SUBSET 3 — proof goes out in minutes (bulk certificates, publicly verifiable)
+// Hook card names pain + product first; three numbered chapters; close restates
+// main + subsets + "priced per event" + website-true demo CTA. Nothing else.
 import { BASE, EVENT_ID, CERT_NUMBER } from './lib/app.mjs';
 import { ACCT } from './lib/scene.mjs';
 import { titleCard } from './scenes.mjs';
-import { caption, removeCaption, ring, removeAnn, zoomTo, zoomReset } from './lib/annotate.mjs';
+import { caption, removeCaption, ring, removeAnn } from './lib/annotate.mjs';
 
 async function waitText(page, text, timeout = 25000) {
   await page.getByText(text, { exact: false }).first().waitFor({ timeout });
@@ -12,18 +17,18 @@ async function waitText(page, text, timeout = 25000) {
 export const TEASER_SCENES = [
 
   {
-    name: 't0-hook',
+    name: 'e0-hook',
     account: ACCT.guest,
-    narration: 'What if your next event could run itself?',
+    narration: "You planned the event. But who's actually coming? EventSync runs the chase — so your team runs the event.",
     beats: async ({ page, D, ready }) => {
       await titleCard(page, {
-        kicker: 'Eventsync',
-        headline: 'What if your event\ncould run itself?',
-        body: 'Registrations. Reminders. Check-in. Certificates. Analytics. One platform.',
+        kicker: 'EventSync · Event Management Platform',
+        headline: 'You planned the event.\nWho’s actually coming?',
+        body: 'EventSync runs the chase — your team runs the event.',
         stats: [
-          { label: 'Registrations', value: '300+', badge: 'live' },
-          { label: 'Reminder loop', value: 'WhatsApp + AI calls' },
+          { label: 'Confirmations', value: 'Run themselves' },
           { label: 'Check-in',      value: '< 1 second' },
+          { label: 'Certificates',  value: 'Minutes, verified' },
         ],
       });
       const waitUntil = await ready(400);
@@ -32,37 +37,20 @@ export const TEASER_SCENES = [
   },
 
   {
-    name: 't1-page',
-    account: ACCT.guest,
-    narration: 'Meet Eventsync. Publish a custom event page and take registrations in minutes — no developer needed.',
-    beats: async ({ page, at, D, ready }) => {
-      await page.goto(`${BASE}/events/product-summit-2026`, { waitUntil: 'networkidle' });
-      await waitText(page, 'Product Summit 2026');
-      const waitUntil = await ready(1200);
-      const cap = await caption(page, 'Custom event page — built, not coded');
-      await waitUntil(at('registrations', 4, -0.2));
-      await page.evaluate(() => window.scrollBy({ top: 450, behavior: 'smooth' }));
-      await waitUntil(D - 0.8);
-      await removeCaption(page, cap);
-      await waitUntil(D);
-    },
-  },
-
-  {
-    name: 't2-reminders',
+    name: 'e1-confirm',
     account: ACCT.admin,
-    narration: 'It closes the loop for you. WhatsApp reminders go out on their own, and an AI voice agent calls anyone still unconfirmed.',
+    narration: 'One — confirmations run themselves. WhatsApp reminders go out on their own, and an AI voice agent calls whoever stays silent — so you know your real numbers before the day.',
     beats: async ({ page, at, D, ready }) => {
       await page.goto(`${BASE}/admin/events/${EVENT_ID}/reminders`, { waitUntil: 'networkidle' });
       await waitText(page, 'Reminder Loop');
       await page.getByText(/WhatsApp Reminders/i).first().waitFor({ timeout: 15000 }).catch(() => {});
       const waitUntil = await ready(1200);
-      const cap = await caption(page, 'The reminder loop — WhatsApp + AI calls, automatic');
+      const cap = await caption(page, 'One · Confirmations — WhatsApp + AI calls, automatic');
       await waitUntil(at('WhatsApp reminders', 4, -0.2));
       const r1 = await ring(page, page.getByText('WhatsApp Reminders', { exact: false }).first(), { label: 'Sent on their own' });
       await waitUntil(at('AI voice agent', 7, -0.2));
       if (r1) await removeAnn(page, r1);
-      const r2 = await ring(page, page.getByText('Confirmed on Call', { exact: false }).first(), { label: 'Riya confirms attendance' }).catch(() => null);
+      const r2 = await ring(page, page.getByText('Confirmed on Call', { exact: false }).first(), { label: 'Said yes to the AI agent' }).catch(() => null);
       await waitUntil(D - 0.8);
       if (r2) await removeAnn(page, r2);
       await removeCaption(page, cap);
@@ -71,9 +59,9 @@ export const TEASER_SCENES = [
   },
 
   {
-    name: 't3-checkin',
+    name: 'e2-checkin',
     account: ACCT.admin,
-    narration: 'On event day, QR check-in takes under a second — and you watch attendance climb in real time.',
+    narration: 'Two — event day is instant. QR check-in takes under a second, and attendance climbs live on the screen.',
     beats: async ({ page, at, D, ready }) => {
       await page.goto(`${BASE}/admin/check-in/${EVENT_ID}`, { waitUntil: 'networkidle' });
       await waitText(page, 'Check-In');
@@ -82,7 +70,7 @@ export const TEASER_SCENES = [
         undefined, { timeout: 20000 },
       ).catch(() => {});
       const waitUntil = await ready(1200);
-      const cap = await caption(page, 'QR check-in — live attendance, no lists');
+      const cap = await caption(page, 'Two · Check-in — under a second, no lists');
       await waitUntil(at('attendance', 5, -0.2));
       const r1 = await ring(page, page.getByText(/Attendance Rate/i).first(), { label: 'Climbing with every scan' }).catch(() => null);
       await waitUntil(D - 0.8);
@@ -93,34 +81,15 @@ export const TEASER_SCENES = [
   },
 
   {
-    name: 't4-engage',
-    account: ACCT.admin,
-    narration: 'Points, badges, and rewards keep three hundred people networking — not just attending.',
-    beats: async ({ page, at, D, ready }) => {
-      await page.goto(`${BASE}/admin/events/${EVENT_ID}/gamification`, { waitUntil: 'networkidle' });
-      await waitText(page, 'Priya Sharma');
-      const waitUntil = await ready(1200);
-      const cap = await caption(page, 'Gamification — engagement you can measure');
-      await waitUntil(at('badges', 4, -0.2));
-      const priyaRow = page.getByText('Priya Sharma').first();
-      await zoomTo(page, priyaRow, 1.15, 800);
-      await waitUntil(D - 1.0);
-      await zoomReset(page, 500);
-      await removeCaption(page, cap);
-      await waitUntil(D);
-    },
-  },
-
-  {
-    name: 't5-certs',
+    name: 'e3-certs',
     account: ACCT.guest,
-    narration: 'Afterwards, certificates go out in bulk — publicly verifiable by anyone, shareable on LinkedIn.',
+    narration: 'Three — proof goes out in minutes. Certificates issue in bulk, and anyone can verify one — no login, shareable on LinkedIn.',
     beats: async ({ page, at, D, ready }) => {
       await page.goto(`${BASE}/verify/${CERT_NUMBER}`, { waitUntil: 'networkidle' });
       await waitText(page, 'Certificate');
       const waitUntil = await ready(1200);
-      const cap = await caption(page, 'Public verification — trust built in');
-      await waitUntil(at('verifiable', 4, -0.2));
+      const cap = await caption(page, 'Three · Certificates — public verification, trust built in');
+      await waitUntil(at('verify one', 4, -0.2));
       const verified = page.getByText(/Verified/i).first();
       const r1 = await ring(page, verified, { label: 'Anyone can confirm it' }).catch(() => null);
       await waitUntil(D - 0.8);
@@ -131,31 +100,14 @@ export const TEASER_SCENES = [
   },
 
   {
-    name: 't6-analytics',
-    account: ACCT.admin,
-    narration: 'And the analytics write the playbook for your next event.',
-    beats: async ({ page, at, D, ready }) => {
-      await page.goto(`${BASE}/admin/events/${EVENT_ID}/analytics`, { waitUntil: 'networkidle' });
-      await waitText(page, 'Analytics');
-      const waitUntil = await ready(1200);
-      const cap = await caption(page, 'Every decision for next time — one view');
-      await waitUntil(D - 0.8);
-      await removeCaption(page, cap);
-      await waitUntil(D);
-    },
-  },
-
-  {
-    // Numbers close: manual-vs-EventSync before/after + demo CTA (matches the
-    // website's "book a free demo"; pricing is quoted per event, same day).
-    name: 't7-close',
+    name: 'e4-close',
     account: ACCT.guest,
-    narration: "Here's the shift: your team stops working the phone list and the check-in queue — and runs the event: the program, the guests, the room. Confirmations happen on their own; your people step in only where judgment is needed. Check-in drops from a queue to under a second. Certificates that ate an afternoon go out in minutes. Eventsync, by In-Sync. Book a demo — bring your next event.",
+    narration: "That's EventSync: it confirms, it checks in, it certifies — you run the room. Priced per event, quoted the same day. Book a free demo — bring your next event.",
     beats: async ({ page, D, ready }) => {
       await titleCard(page, {
-        kicker: 'Eventsync · Event Management Platform',
-        headline: 'Your team runs the event.\nThe platform runs the chase.',
-        body: 'Priced per event, quoted the same day · Book a demo · event.in-sync.co.in',
+        kicker: 'EventSync · Event Management Platform',
+        headline: 'It runs the chase.\nYou run the event.',
+        body: 'Priced per event, quoted the same day · Book a free demo · event.in-sync.co.in',
         stats: [
           { label: 'Confirmations', value: 'Days of calling → automatic' },
           { label: 'Check-in',      value: 'Desk queue → under a second' },
