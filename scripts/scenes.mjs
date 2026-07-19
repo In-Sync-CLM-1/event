@@ -14,7 +14,7 @@ const notifDir = join(here, 'recordings', 'notif');
 
 // ── shared helpers ────────────────────────────────────────────────────────────
 
-function titleCard(page, { kicker = 'Eventsync', headline, body, stats = [] }) {
+export function titleCard(page, { kicker = 'Eventsync', headline, body, stats = [] }) {
   return page.setContent(`<!doctype html><html><head><meta charset="utf-8"><style>
     *{box-sizing:border-box;margin:0;padding:0}
     body{width:1366px;height:768px;font-family:Inter,Segoe UI,Arial,sans-serif;background:#0f0a1e;overflow:hidden;display:grid;grid-template-columns:1.1fr 0.9fr}
@@ -666,10 +666,12 @@ export const SCENE_MAP = {
       const r2 = await ring(page, prd, { label: 'PRD Template — registered attendees only (gated)' });
       await waitUntil(at('gated', 13, -0.2));
       if (r2) await removeAnn(page, r2);
-      // Ring the gated toggle/badge
-      const gatedBadge = page.getByText(/gated|Gated|registered only/i).first();
-      const r3 = await ring(page, gatedBadge, { label: 'Gated: requires registration' }).catch(() => null);
+      // Un-zoom FIRST, then ring the Gated badge — a ring drawn during zoom
+      // goes stale (floats over the wrong cell) once the transform resets
       await zoomReset(page, 600);
+      await page.waitForTimeout(700);
+      const gatedBadge = page.getByText('Gated', { exact: true }).first();
+      const r3 = await ring(page, gatedBadge, { label: 'Gated: requires registration' }).catch(() => null);
       await waitUntil(at('Content Library', 19, -0.2));
       if (r3) await removeAnn(page, r3);
       await removeCaption(page, cap);

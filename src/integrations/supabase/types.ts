@@ -1595,6 +1595,19 @@ export type Database = {
       }
       is_platform_admin: { Args: { _user_id: string }; Returns: boolean }
       user_has_event_registration: { Args: { ev_id: string }; Returns: boolean }
+      verify_certificate: {
+        Args: { cert_number: string }
+        Returns: {
+          certificate_number: string
+          issued_at: string
+          pdf_url: string | null
+          attendee_name: string
+          attendee_email: string
+          event_title: string
+          event_start_date: string
+          event_end_date: string
+        }[]
+      }
     }
     Enums: {
       app_role:

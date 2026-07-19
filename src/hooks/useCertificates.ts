@@ -23,13 +23,20 @@ export function useCertificateByNumber(certificateNumber: string | undefined) {
     queryKey: ['certificate', certificateNumber],
     queryFn: async () => {
       if (!certificateNumber) return null;
+      // Verification is a logged-out surface; RLS blocks direct table reads for
+      // anon, so it goes through the SECURITY DEFINER verify_certificate lookup.
       const { data, error } = await supabase
-        .from('certificates')
-        .select(`*, registration:registrations(id, full_name, email), event:events(id, title, start_date, end_date)`)
-        .eq('certificate_number', certificateNumber)
-        .single();
+        .rpc('verify_certificate', { cert_number: certificateNumber });
       if (error) throw error;
-      return data;
+      const row = data?.[0];
+      if (!row) return null;
+      return {
+        certificate_number: row.certificate_number,
+        issued_at: row.issued_at,
+        pdf_url: row.pdf_url,
+        registration: { full_name: row.attendee_name, email: row.attendee_email },
+        event: { title: row.event_title, start_date: row.event_start_date, end_date: row.event_end_date },
+      };
     },
     enabled: !!certificateNumber,
   });
