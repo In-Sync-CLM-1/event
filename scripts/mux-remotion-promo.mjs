@@ -5,11 +5,12 @@ import * as V from 'file:///C:/Users/Admin/event/scripts/lib/video.mjs';
 
 const FF = 'C:\\Users\\Admin\\scoop\\shims\\ffmpeg.exe';
 const scenes = 'C:\\Users\\Admin\\event\\scripts\\recordings\\scenes';
-const silent = 'C:\\Users\\Admin\\event\\remotion-promo\\out\\promo-visual.mp4';
+// optional args: [visualPath] [outPath] — defaults to the landscape cut
+const silent = process.argv[2] || 'C:\\Users\\Admin\\event\\remotion-promo\\out\\promo-visual.mp4';
 const narr = join(scenes, 'promo-narration.mp3');
 const music = 'C:\\Users\\Admin\\event\\scripts\\assets\\promo-bed.mp3';
 const mixed = join(scenes, 'promo-remotion-mixed.mp4');
-const OUT = 'C:\\Users\\Admin\\Downloads\\eventsync-promo.mp4';
+const OUT = process.argv[3] || 'C:\\Users\\Admin\\Downloads\\eventsync-promo.mp4';
 
 const dur = V.duration(silent);
 console.log(`visual ${dur.toFixed(2)}s, narration ${V.duration(narr).toFixed(2)}s`);

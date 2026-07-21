@@ -14,6 +14,10 @@ const marksOf = (k: string): Record<string, number> => {
   return (sc ? { ...sc.marks } : {}) as Record<string, number>;
 };
 
+// portrait (1080x1920) rendering: scenes stack vertically and type scales down
+const VertCtx = React.createContext(false);
+const useVert = () => React.useContext(VertCtx);
+
 const Center: React.FC<{ children: React.ReactNode; style?: React.CSSProperties }> = ({ children, style }) => (
   <AbsoluteFill style={{ justifyContent: 'center', alignItems: 'center', textAlign: 'center', padding: '0 8%', ...style }}>{children}</AbsoluteFill>
 );
@@ -29,6 +33,7 @@ const H1 = 122, H2 = 84;
 // ── Scene: Hook ───────────────────────────────────────────────────────────────
 const Hook: React.FC = () => {
   const frame = useCurrentFrame(); const { fps } = useVideoConfig();
+  const V = useVert();
   const M = marksOf('hook');
   const subS = spring({ frame: frame - M.sub, fps, config: { damping: 200 } });
   const numS = spring({ frame: frame - M.pct, fps, config: { damping: 11, stiffness: 160 } });
@@ -37,19 +42,19 @@ const Hook: React.FC = () => {
     <Center>
       <div>
         <Eyebrow text="EventSync" delay={0} />
-        <div style={{ fontFamily: DISPLAY, fontWeight: 800, fontSize: H1, lineHeight: 1.02, letterSpacing: -2, marginTop: 24 }}>
+        <div style={{ fontFamily: DISPLAY, fontWeight: 800, fontSize: V ? 92 : H1, lineHeight: 1.04, letterSpacing: -2, marginTop: 24 }}>
           <Words text="Your event is your" delay={6} />
           <br />
           <Words text="big moment." delay={20} accentColor={HL.hook} />
         </div>
-        <div style={{ fontFamily: BODY, fontWeight: 600, fontSize: 40, color: C.dim, marginTop: 40, opacity: subS, transform: `translateY(${interpolate(subS, [0, 1], [24, 0])}px)` }}>
+        <div style={{ fontFamily: BODY, fontWeight: 600, fontSize: V ? 34 : 40, color: C.dim, marginTop: 40, opacity: subS, transform: `translateY(${interpolate(subS, [0, 1], [24, 0])}px)` }}>
           A form. A group chat. A list at the door?
         </div>
-        <div style={{ marginTop: 30, opacity: numS, transform: `scale(${interpolate(numS, [0, 1], [1.45, 1])})` }}>
-          <span style={{ fontFamily: DISPLAY, fontWeight: 800, fontSize: 168, lineHeight: 1, color: HL.hook, textShadow: '0 0 60px rgba(45,212,191,.45)' }}>
+        <div style={{ marginTop: V ? 44 : 30, opacity: numS, transform: `scale(${interpolate(numS, [0, 1], [1.45, 1])})` }}>
+          <span style={{ fontFamily: DISPLAY, fontWeight: 800, fontSize: V ? 150 : 168, lineHeight: 1, color: HL.hook, textShadow: '0 0 60px rgba(45,212,191,.45)' }}>
             <CountUp to={40} delay={M.pct} dur={Math.max(12, M.never - M.pct - 4)} />%
           </span>
-          <span style={{ fontFamily: DISPLAY, fontWeight: 800, fontSize: 56, color: '#fff', marginLeft: 14, display: 'inline-block', opacity: neverS, transform: `translateY(${interpolate(neverS, [0, 1], [26, 0])}px)` }}>
+          <span style={{ fontFamily: DISPLAY, fontWeight: 800, fontSize: V ? 44 : 56, color: '#fff', marginLeft: 14, display: 'inline-block', opacity: neverS, transform: `translateY(${interpolate(neverS, [0, 1], [26, 0])}px)` }}>
             never show up.
           </span>
         </div>
@@ -70,12 +75,13 @@ const sweepIdx = (frame: number, M: Record<string, number>) => {
 
 const SweepDevice: React.FC<{ idx: number }> = ({ idx }) => {
   const frame = useCurrentFrame(); const { fps } = useVideoConfig();
+  const V = useVert();
   const s = spring({ frame: frame - 20, fps, config: { damping: 200, stiffness: 80 } });
   const float = Math.sin(frame / 26) * 12;
   const push = 1 + Math.min(frame * 0.00028, 0.045);
   return (
     <div style={{
-      width: 1220, opacity: s, borderRadius: 18, overflow: 'hidden', margin: '0 auto',
+      width: V ? 980 : 1220, opacity: s, borderRadius: 18, overflow: 'hidden', margin: '0 auto',
       transform: `perspective(2000px) rotateX(6deg) translateY(${interpolate(s, [0, 1], [40, 0]) + float}px) scale(${interpolate(s, [0, 1], [0.92, 1]) * push})`,
       boxShadow: '0 70px 160px rgba(0,0,0,.62), 0 0 120px rgba(139,92,246,.34), 0 0 0 1px rgba(255,255,255,.10)', background: '#0b0b18',
     }}>
@@ -94,15 +100,16 @@ const SweepDevice: React.FC<{ idx: number }> = ({ idx }) => {
 
 const Sweep: React.FC = () => {
   const frame = useCurrentFrame();
+  const V = useVert();
   const M = marksOf('sweep');
   const idx = sweepIdx(frame, M);
   return (
     <AbsoluteFill style={{ justifyContent: 'center', alignItems: 'center', padding: '0 6%' }}>
-      <div style={{ fontFamily: DISPLAY, fontWeight: 800, fontSize: H2, textAlign: 'center', letterSpacing: -1 }}>
+      <div style={{ fontFamily: DISPLAY, fontWeight: 800, fontSize: V ? 64 : H2, textAlign: 'center', letterSpacing: -1 }}>
         <Words text="One platform." delay={4} /><Words text=" Every part of your event." delay={16} accentColor={HL.sweep} />
       </div>
-      <div style={{ marginTop: 34 }}><SweepDevice idx={idx} /></div>
-      <div style={{ marginTop: 30 }}><Chip key={idx} delay={0}>{SWEEP_LABELS[idx]}</Chip></div>
+      <div style={{ marginTop: V ? 56 : 34 }}><SweepDevice idx={idx} /></div>
+      <div style={{ marginTop: V ? 52 : 30 }}><Chip key={idx} delay={0}>{SWEEP_LABELS[idx]}</Chip></div>
     </AbsoluteFill>
   );
 };
@@ -110,7 +117,19 @@ const Sweep: React.FC = () => {
 // ── Scene: Power beat ─────────────────────────────────────────────────────────
 const Power: React.FC<{ k: string; n: string; title: string; chip: React.ReactNode; src: string; side: 'L' | 'R'; accentColor: string }>
   = ({ k, n, title, chip, src, side, accentColor }) => {
+    const V = useVert();
     const M = marksOf(k);
+    if (V) {
+      // portrait: statement on top, device below, everything centered
+      return (
+        <AbsoluteFill style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', padding: '0 5%' }}>
+          <Eyebrow text={n} color={accentColor} delay={0} />
+          <div style={{ fontFamily: DISPLAY, fontWeight: 800, fontSize: 72, letterSpacing: -1, marginTop: 18 }}><Words text={title} delay={8} /></div>
+          <div style={{ marginTop: 54 }}><Device src={src} side={side} width={940} delay={6} /></div>
+          <div style={{ marginTop: 64 }}><Chip delay={M.chip ?? 22}>{chip}</Chip></div>
+        </AbsoluteFill>
+      );
+    }
     const text = (
       <div style={{ flex: 1, padding: side === 'R' ? '0 4% 0 6%' : '0 6% 0 4%' }}>
         <Eyebrow text={n} color={accentColor} delay={0} />
@@ -128,13 +147,14 @@ const Power: React.FC<{ k: string; n: string; title: string; chip: React.ReactNo
 
 // ── Scene: Outcome ────────────────────────────────────────────────────────────
 const Outcome: React.FC = () => {
+  const V = useVert();
   const M = marksOf('outcome');
   const lead = (f: number) => Math.max(0, f - 8);
   return (
     <Center>
       <div>
         <Eyebrow text="The result" color={C.pink} delay={0} />
-        <div style={{ fontFamily: DISPLAY, fontWeight: 800, fontSize: 100, lineHeight: 1.14, letterSpacing: -1, marginTop: 26 }}>
+        <div style={{ fontFamily: DISPLAY, fontWeight: 800, fontSize: V ? 74 : 100, lineHeight: 1.16, letterSpacing: -1, marginTop: 26 }}>
           <div><Words text="A packed room." delay={lead(M.l0)} /></div>
           <div><Words text="A flawless day." delay={lead(M.l1)} accentColor={HL.outcome} /></div>
           <div><Words text="Your best leads, ready." delay={lead(M.l2)} /></div>
@@ -147,6 +167,7 @@ const Outcome: React.FC = () => {
 // ── Scene: CTA ────────────────────────────────────────────────────────────────
 const Cta: React.FC = () => {
   const frame = useCurrentFrame(); const { fps } = useVideoConfig();
+  const V = useVert();
   const M = marksOf('cta');
   const logoS = spring({ frame, fps, config: { damping: 14, stiffness: 120 } });
   const subS = spring({ frame: frame - M.url, fps, config: { damping: 200 } });
@@ -154,13 +175,13 @@ const Cta: React.FC = () => {
     <Center>
       <div>
         <div style={{ display: 'inline-block', background: '#fff', borderRadius: 22, padding: '20px 38px', boxShadow: '0 24px 70px rgba(0,0,0,.4)', opacity: logoS, transform: `scale(${interpolate(logoS, [0, 1], [0.7, 1])})` }}>
-          <Img src={staticFile('logo.png')} style={{ height: 92, display: 'block' }} />
+          <Img src={staticFile('logo.png')} style={{ height: V ? 78 : 92, display: 'block' }} />
         </div>
-        <div style={{ fontFamily: DISPLAY, fontWeight: 800, fontSize: H2, letterSpacing: -1, marginTop: 44 }}>
+        <div style={{ fontFamily: DISPLAY, fontWeight: 800, fontSize: V ? 64 : H2, letterSpacing: -1, marginTop: 44 }}>
           <Words text="Registration is the easy part." delay={10} /><br /><Words text="We run the day." delay={30} accentColor={HL.cta} />
         </div>
         <div style={{ marginTop: 48 }}><GlowButton delay={M.btn}>Book your free demo &rarr;</GlowButton></div>
-        <div style={{ fontFamily: BODY, fontSize: 30, color: C.dim, marginTop: 30, opacity: subS }}>event.in-sync.co.in &middot; part of the In-Sync suite</div>
+        <div style={{ fontFamily: BODY, fontSize: V ? 26 : 30, color: C.dim, marginTop: 30, opacity: subS }}>event.in-sync.co.in &middot; part of the In-Sync suite</div>
       </div>
     </Center>
   );
@@ -175,7 +196,7 @@ const Fade: React.FC<{ dur: number; first?: boolean; last?: boolean; children: R
   return <AbsoluteFill style={{ opacity: op, transform: `scale(${push})` }}>{children}</AbsoluteFill>;
 };
 
-export const Promo: React.FC<{ vertical?: boolean }> = () => {
+export const Promo: React.FC<{ vertical?: boolean }> = ({ vertical }) => {
   const comp: Record<string, React.ReactNode> = {
     hook: <Hook />, sweep: <Sweep />, outcome: <Outcome />, cta: <Cta />,
     p1: <Power k="p1" n="One" title="They show up." chip="WhatsApp reminders + AI no-show calls" src="reminders" side="R" accentColor={C.teal} />,
@@ -196,9 +217,11 @@ export const Promo: React.FC<{ vertical?: boolean }> = () => {
     );
   });
   return (
-    <AbsoluteFill style={{ background: C.bg1 }}>
-      <Bg />
-      {seqs}
-    </AbsoluteFill>
+    <VertCtx.Provider value={!!vertical}>
+      <AbsoluteFill style={{ background: C.bg1 }}>
+        <Bg />
+        {seqs}
+      </AbsoluteFill>
+    </VertCtx.Provider>
   );
 };
