@@ -64,6 +64,7 @@ const eventSchema = z.object({
   end_date: z.date({ required_error: 'End date is required' }),
   registration_deadline: z.date().optional(),
   max_capacity: z.number().optional(),
+  total_spend: z.number().optional(),
   mode: z.enum(['in_person', 'virtual', 'hybrid']),
   virtual_join_url: z.string().url('Must be a valid URL').optional().or(z.literal('')),
   status: z.enum(['draft', 'published', 'cancelled', 'completed']),
@@ -94,6 +95,7 @@ export default function EventEdit() {
       end_date: new Date(event.end_date),
       registration_deadline: event.registration_deadline ? new Date(event.registration_deadline) : undefined,
       max_capacity: event.max_capacity || undefined,
+      total_spend: (event as any).total_spend != null ? Number((event as any).total_spend) : undefined,
       mode: ((event as any).mode as 'in_person' | 'virtual' | 'hybrid') || 'in_person',
       virtual_join_url: (event as any).virtual_join_url || '',
       status: event.status as EventStatus,
@@ -116,6 +118,7 @@ export default function EventEdit() {
         end_date: data.end_date.toISOString(),
         registration_deadline: data.registration_deadline?.toISOString() || null,
         max_capacity: data.max_capacity || null,
+        total_spend: data.total_spend ?? null,
         mode: data.mode,
         virtual_join_url: data.virtual_join_url || null,
         status: data.status,
@@ -444,6 +447,26 @@ export default function EventEdit() {
                                 {...field}
                                 onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
                                 value={field.value || ''}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="total_spend"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Event Budget / Spend (₹)</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                placeholder="All-in spend — powers cost-per-lead"
+                                {...field}
+                                onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                                value={field.value ?? ''}
                               />
                             </FormControl>
                             <FormMessage />

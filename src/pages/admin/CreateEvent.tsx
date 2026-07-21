@@ -26,6 +26,7 @@ const eventSchema = z.object({
   end_date: z.string().min(1, 'End date is required'),
   registration_deadline: z.string().optional(),
   max_capacity: z.coerce.number().min(0).max(100000).optional(),
+  total_spend: z.coerce.number().min(0).optional(),
   mode: z.enum(['in_person', 'virtual', 'hybrid']),
   event_type: z.enum(['conference', 'trade_fair', 'roadshow', 'workshop', 'meetup', 'product_launch', 'webinar']).optional(),
   virtual_join_url: z.string().url('Must be a valid URL').optional().or(z.literal('')),
@@ -96,6 +97,7 @@ export default function CreateEvent() {
           ? new Date(data.registration_deadline).toISOString()
           : undefined,
         max_capacity: data.max_capacity || undefined,
+        total_spend: data.total_spend || undefined,
         created_by: user?.id,
       });
 
@@ -347,6 +349,20 @@ export default function CreateEvent() {
                 />
                 <p className="text-xs text-muted-foreground">
                   Leave empty for unlimited capacity
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="total_spend">Event Budget / Spend (₹)</Label>
+                <Input
+                  id="total_spend"
+                  type="number"
+                  placeholder="e.g. 500000"
+                  min={0}
+                  {...register('total_spend')}
+                />
+                <p className="text-xs text-muted-foreground">
+                  All-in spend — powers cost-per-lead on the ROI page
                 </p>
               </div>
 

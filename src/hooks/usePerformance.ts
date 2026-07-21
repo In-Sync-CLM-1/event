@@ -16,6 +16,11 @@ export interface EventPerformance {
   warm: number;
   engaged: number;
   passive: number;
+  /** All-in event spend in INR as entered by the organizer; null = not tracked */
+  spend: number | null;
+  salesReady: number;
+  /** spend ÷ salesReady, null when either side is missing */
+  costPerLead: number | null;
 }
 
 export interface PerformanceSummary {
@@ -23,8 +28,14 @@ export interface PerformanceSummary {
   totalEvents: number;
   totalRegistrations: number;
   totalAttended: number;
+  totalActive: number;
   attendanceRate: number;
   salesReadyLeads: number;
+  totalSpend: number;
+  /** true when at least one event in the period has a spend figure */
+  hasSpend: boolean;
+  costPerSalesReadyLead: number | null;
+  pipelineConversion: number;
   periodLabel: string;
 }
 
@@ -71,7 +82,7 @@ export function usePerformance(period: PerformancePeriod) {
 
       let evQuery = supabase
         .from('events')
-        .select('id, title, start_date, city, mode')
+        .select('id, title, start_date, city, mode, total_spend')
         .neq('status', 'draft')
         .order('start_date', { ascending: true });
       if (from) evQuery = evQuery.gte('start_date', from.toISOString());
@@ -81,7 +92,11 @@ export function usePerformance(period: PerformancePeriod) {
 
       const ids = (events || []).map((e) => e.id);
       if (!ids.length) {
-        return { events: [], totalEvents: 0, totalRegistrations: 0, totalAttended: 0, attendanceRate: 0, salesReadyLeads: 0, periodLabel: label };
+        return {
+          events: [], totalEvents: 0, totalRegistrations: 0, totalAttended: 0, totalActive: 0,
+          attendanceRate: 0, salesReadyLeads: 0, totalSpend: 0, hasSpend: false,
+          costPerSalesReadyLead: null, pipelineConversion: 0, periodLabel: label,
+        };
       }
 
       const [regs, checkIns, scores] = await Promise.all([
@@ -98,6 +113,8 @@ export function usePerformance(period: PerformancePeriod) {
         byEvent.set(e.id, {
           eventId: e.id, title: e.title, startDate: e.start_date, city: e.city, mode: e.mode,
           registered: 0, attended: 0, attendanceRate: 0, hot: 0, warm: 0, engaged: 0, passive: 0,
+          spend: (e as { total_spend: number | null }).total_spend != null ? Number((e as { total_spend: number | null }).total_spend) : null,
+          salesReady: 0, costPerLead: null,
         });
       }
       for (const r of regs) {
@@ -123,17 +140,29 @@ export function usePerformance(period: PerformancePeriod) {
       // events with zero registrations (drafts-in-spirit, test shells) would
       // read as failures — leave them out of the review
       const list = [...byEvent.values()].filter((e) => e.registered > 0);
-      for (const e of list) e.attendanceRate = e.registered ? Math.round((e.attended / e.registered) * 100) : 0;
+      for (const e of list) {
+        e.attendanceRate = e.registered ? Math.round((e.attended / e.registered) * 100) : 0;
+        e.salesReady = e.hot + e.warm;
+        e.costPerLead = e.spend != null && e.salesReady > 0 ? Math.round(e.spend / e.salesReady) : null;
+      }
 
       const totalRegistrations = list.reduce((s, e) => s + e.registered, 0);
       const totalAttended = list.reduce((s, e) => s + e.attended, 0);
+      const salesReadyLeads = list.reduce((s, e) => s + e.salesReady, 0);
+      const totalSpend = list.reduce((s, e) => s + (e.spend ?? 0), 0);
+      const hasSpend = list.some((e) => e.spend != null);
       return {
         events: list,
         totalEvents: list.length,
         totalRegistrations,
         totalAttended,
+        totalActive: list.reduce((s, e) => s + e.salesReady + e.engaged, 0),
         attendanceRate: totalRegistrations ? Math.round((totalAttended / totalRegistrations) * 100) : 0,
-        salesReadyLeads: list.reduce((s, e) => s + e.hot + e.warm, 0),
+        salesReadyLeads,
+        totalSpend,
+        hasSpend,
+        costPerSalesReadyLead: hasSpend && salesReadyLeads > 0 ? Math.round(totalSpend / salesReadyLeads) : null,
+        pipelineConversion: totalRegistrations ? Math.round((salesReadyLeads / totalRegistrations) * 100) : 0,
         periodLabel: label,
       };
     },

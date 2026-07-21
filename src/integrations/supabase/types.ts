@@ -707,6 +707,7 @@ export type Database = {
           start_date: string
           status: Database["public"]["Enums"]["event_status"]
           title: string
+          total_spend: number | null
           updated_at: string
           venue: string | null
           virtual_join_url: string | null
@@ -730,6 +731,7 @@ export type Database = {
           start_date: string
           status?: Database["public"]["Enums"]["event_status"]
           title: string
+          total_spend?: number | null
           updated_at?: string
           venue?: string | null
           virtual_join_url?: string | null
@@ -753,6 +755,7 @@ export type Database = {
           start_date?: string
           status?: Database["public"]["Enums"]["event_status"]
           title?: string
+          total_spend?: number | null
           updated_at?: string
           venue?: string | null
           virtual_join_url?: string | null

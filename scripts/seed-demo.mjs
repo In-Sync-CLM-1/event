@@ -145,6 +145,7 @@ const { data: eventRow, error: evErr } = await sb.from('events').insert({
   end_date:              TODAY_6PM,
   registration_deadline: TODAY_REGDL,
   max_capacity:          300,
+  total_spend:           1600000,
   mode:                  'in_person',
   event_type:            'conference',
   status:                'published',
@@ -790,10 +791,10 @@ await sb.from('landing_pages').insert({
 // of history behind them. Repeat attendee names across events are intentional.
 console.log('Creating past events (performance history)...');
 const PAST_EVENTS = [
-  { title: 'SaaS Growth Conclave',       slug: 'saas-growth-conclave-2026',     monthsAgo: 5, day: 12, city: 'Mumbai',    venue: 'Jio World Centre',        mode: 'in_person', event_type: 'conference', regs: 218, attend: 152 },
-  { title: 'Fintech Founders Roadshow',  slug: 'fintech-founders-roadshow-2026',monthsAgo: 3, day: 9,  city: 'New Delhi', venue: 'The Lalit',               mode: 'in_person', event_type: 'roadshow',   regs: 142, attend: 108 },
-  { title: 'D2C Brand Summit',           slug: 'd2c-brand-summit-2026',         monthsAgo: 2, day: 21, city: 'Bengaluru', venue: 'Sheraton Grand Brigade',  mode: 'in_person', event_type: 'trade_fair', regs: 176, attend: 121 },
-  { title: 'AI in Product — Virtual Day',slug: 'ai-in-product-virtual-2026',    monthsAgo: 1, day: 18, city: null,        venue: 'Online',                  mode: 'virtual',   event_type: 'webinar',    regs: 204, attend: 131 },
+  { title: 'SaaS Growth Conclave',       slug: 'saas-growth-conclave-2026',     monthsAgo: 5, day: 12, city: 'Mumbai',    venue: 'Jio World Centre',        mode: 'in_person', event_type: 'conference', regs: 218, attend: 152, spend: 1450000 },
+  { title: 'Fintech Founders Roadshow',  slug: 'fintech-founders-roadshow-2026',monthsAgo: 3, day: 9,  city: 'New Delhi', venue: 'The Lalit',               mode: 'in_person', event_type: 'roadshow',   regs: 142, attend: 108, spend: 820000 },
+  { title: 'D2C Brand Summit',           slug: 'd2c-brand-summit-2026',         monthsAgo: 2, day: 21, city: 'Bengaluru', venue: 'Sheraton Grand Brigade',  mode: 'in_person', event_type: 'trade_fair', regs: 176, attend: 121, spend: 960000 },
+  { title: 'AI in Product — Virtual Day',slug: 'ai-in-product-virtual-2026',    monthsAgo: 1, day: 18, city: null,        venue: 'Online',                  mode: 'virtual',   event_type: 'webinar',    regs: 204, attend: 131, spend: 180000 },
 ];
 
 const pastDate = (monthsAgo, day, h, m = 0) => {
@@ -813,6 +814,7 @@ for (const pe of PAST_EVENTS) {
     start_date: start.toISOString(), end_date: end.toISOString(),
     registration_deadline: new Date(start.getTime() - 2 * 86400000).toISOString(),
     max_capacity: Math.ceil(pe.regs / 10) * 10 + 40,
+    total_spend: pe.spend,
     mode: pe.mode, event_type: pe.event_type, status: 'published',
     created_by: userIds.rahul,
   }).select().single();

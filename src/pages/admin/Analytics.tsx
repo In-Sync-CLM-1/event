@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -5,7 +6,58 @@ import { Button } from '@/components/ui/button';
 import { useRegistrationStats, useAttendanceTrends, useSessionPopularity, useEngagementDistribution, usePointsDistribution } from '@/hooks/useAnalytics';
 import { ArrowLeft, Users, UserCheck, Clock, Award } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
+import { EChart, viz, vizAxisLabel, vizSplitLine, vizTooltip } from '@/components/charts/EChart';
+
+const truncate = (s: string, n = 22) => (s.length > n ? s.slice(0, n - 1).trimEnd() + '…' : s);
+
+// Horizontal lollipop — a 2px stem + dot instead of a fat bar
+const lollipop = (rows: { name: string; value: number }[], valueLabel: string) => {
+  const sorted = [...rows].sort((a, b) => a.value - b.value);
+  return {
+    grid: { left: 150, right: 40, top: 12, bottom: 30 },
+    tooltip: {
+      ...vizTooltip,
+      trigger: 'item',
+      formatter: (p: { name: string; value: number }) =>
+        `<b>${p.name}</b><br/>${p.value.toLocaleString('en-IN')} ${valueLabel}`,
+    },
+    xAxis: {
+      type: 'value',
+      axisLabel: vizAxisLabel,
+      splitLine: vizSplitLine,
+    },
+    yAxis: {
+      type: 'category',
+      data: sorted.map((r) => truncate(r.name)),
+      axisLabel: { ...vizAxisLabel, fontSize: 12 },
+      axisLine: { lineStyle: { color: viz.axis } },
+      axisTick: { show: false },
+    },
+    series: [
+      {
+        type: 'bar',
+        data: sorted.map((r) => r.value),
+        barWidth: 2,
+        itemStyle: { color: viz.blueSoft },
+        silent: true,
+      },
+      {
+        type: 'scatter',
+        data: sorted.map((r) => ({ name: r.name, value: r.value })),
+        symbolSize: 11,
+        itemStyle: { color: viz.blue, borderColor: viz.surface, borderWidth: 2 },
+        label: {
+          show: true,
+          position: 'right',
+          distance: 6,
+          color: viz.inkSecondary,
+          fontSize: 11,
+          formatter: (p: { value: number }) => p.value.toLocaleString('en-IN'),
+        },
+      },
+    ],
+  };
+};
 
 export default function Analytics() {
   const { eventId } = useParams<{ eventId: string }>();
@@ -16,7 +68,91 @@ export default function Analytics() {
   const { data: engagementDist } = useEngagementDistribution(eventId || '');
   const { data: pointsDist } = usePointsDistribution(eventId || '');
 
-  const COLORS = ['#f97316', '#eab308', '#3b82f6', '#9ca3af'];
+  const trendOption = useMemo(() => {
+    if (!attendanceTrends?.length) return null;
+    return {
+      grid: { left: 44, right: 24, top: 20, bottom: 36 },
+      tooltip: {
+        ...vizTooltip,
+        trigger: 'axis',
+        axisPointer: { type: 'line', lineStyle: { color: viz.axis, width: 1 } },
+      },
+      xAxis: {
+        type: 'category',
+        data: attendanceTrends.map((t) => new Date(t.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })),
+        axisLabel: vizAxisLabel,
+        axisLine: { lineStyle: { color: viz.axis } },
+        axisTick: { show: false },
+        boundaryGap: false,
+      },
+      yAxis: { type: 'value', axisLabel: vizAxisLabel, splitLine: vizSplitLine },
+      series: [{
+        name: 'Check-ins',
+        type: 'line',
+        data: attendanceTrends.map((t) => t.checkIns),
+        lineStyle: { color: viz.blue, width: 2 },
+        itemStyle: { color: viz.blue, borderColor: viz.surface, borderWidth: 2 },
+        symbol: 'circle',
+        symbolSize: 9,
+        areaStyle: { color: viz.blue, opacity: 0.06 },
+      }],
+    };
+  }, [attendanceTrends]);
+
+  // Cumulative depth ladder: how far into engagement the audience actually went
+  const depthOption = useMemo(() => {
+    if (!engagementDist?.some((d) => d.count > 0)) return null;
+    const count = (tier: string) => engagementDist.find((d) => d.tier === tier)?.count ?? 0;
+    const total = engagementDist.reduce((s, d) => s + d.count, 0);
+    const stages = [
+      { name: 'All Scored', value: total },
+      { name: 'Engaged or Better', value: count('hot') + count('warm') + count('engaged') },
+      { name: 'Warm or Better', value: count('hot') + count('warm') },
+      { name: 'Hot', value: count('hot') },
+    ];
+    return {
+      tooltip: {
+        ...vizTooltip,
+        trigger: 'item',
+        formatter: (p: { name: string; value: number }) =>
+          `<b>${p.name}</b><br/>${p.value.toLocaleString('en-IN')} attendees · ${total ? Math.round((p.value / total) * 100) : 0}%`,
+      },
+      series: [{
+        type: 'funnel',
+        sort: 'none',
+        left: 10, right: 10, top: 8, bottom: 8,
+        minSize: '16%', maxSize: '94%',
+        gap: 4,
+        itemStyle: { borderColor: viz.surface, borderWidth: 2 },
+        label: {
+          position: 'inside',
+          fontSize: 12,
+          formatter: (p: { name: string; value: number }) => `${p.name}  ·  ${p.value.toLocaleString('en-IN')}`,
+        },
+        data: stages.map((s, i) => ({
+          ...s,
+          itemStyle: { color: viz.ramp4[i] },
+          label: { color: i < 2 ? viz.ink : '#ffffff' },
+        })),
+      }],
+    };
+  }, [engagementDist]);
+
+  const sessionOption = useMemo(() => {
+    if (!sessionPopularity?.length) return null;
+    return lollipop(
+      sessionPopularity.slice(0, 5).map((s) => ({ name: s.title, value: s.attendees })),
+      'attendees',
+    );
+  }, [sessionPopularity]);
+
+  const pointsOption = useMemo(() => {
+    if (!pointsDist?.length) return null;
+    return lollipop(
+      pointsDist.map((p) => ({ name: p.activity.replace(/_/g, ' '), value: p.points })),
+      'points',
+    );
+  }, [pointsDist]);
 
   return (
     <AdminLayout>
@@ -100,47 +236,22 @@ export default function Analytics() {
               <CardTitle>Check-in Trends</CardTitle>
             </CardHeader>
             <CardContent>
-              {attendanceTrends && attendanceTrends.length > 0 ? (
-                <ResponsiveContainer width="100%" height={250}>
-                  <LineChart data={attendanceTrends}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" tickFormatter={(v) => new Date(v).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} />
-                    <YAxis />
-                    <Tooltip />
-                    <Line type="monotone" dataKey="checkIns" stroke="hsl(var(--primary))" strokeWidth={2} />
-                  </LineChart>
-                </ResponsiveContainer>
+              {trendOption ? (
+                <EChart option={trendOption} height={250} />
               ) : (
                 <p className="text-muted-foreground text-center py-8">No check-in data yet</p>
               )}
             </CardContent>
           </Card>
 
-          {/* Engagement Distribution */}
+          {/* Engagement Depth */}
           <Card>
             <CardHeader>
-              <CardTitle>Engagement Tiers</CardTitle>
+              <CardTitle>Engagement Depth</CardTitle>
             </CardHeader>
             <CardContent>
-              {engagementDist && engagementDist.some(d => d.count > 0) ? (
-                <ResponsiveContainer width="100%" height={250}>
-                  <PieChart>
-                    <Pie
-                      data={engagementDist}
-                      dataKey="count"
-                      nameKey="tier"
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={80}
-                      label={({ tier, percentage }) => `${tier}: ${percentage}%`}
-                    >
-                      {engagementDist.map((_, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
+              {depthOption ? (
+                <EChart option={depthOption} height={250} />
               ) : (
                 <p className="text-muted-foreground text-center py-8">No engagement data yet</p>
               )}
@@ -153,16 +264,8 @@ export default function Analytics() {
               <CardTitle>Session Popularity</CardTitle>
             </CardHeader>
             <CardContent>
-              {sessionPopularity && sessionPopularity.length > 0 ? (
-                <ResponsiveContainer width="100%" height={250}>
-                  <BarChart data={sessionPopularity.slice(0, 5)} layout="vertical">
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" />
-                    <YAxis dataKey="title" type="category" width={150} tick={{ fontSize: 12 }} />
-                    <Tooltip />
-                    <Bar dataKey="attendees" fill="hsl(var(--primary))" />
-                  </BarChart>
-                </ResponsiveContainer>
+              {sessionOption ? (
+                <EChart option={sessionOption} height={250} />
               ) : (
                 <p className="text-muted-foreground text-center py-8">No session attendance data yet</p>
               )}
@@ -175,16 +278,8 @@ export default function Analytics() {
               <CardTitle>Points by Activity</CardTitle>
             </CardHeader>
             <CardContent>
-              {pointsDist && pointsDist.length > 0 ? (
-                <ResponsiveContainer width="100%" height={250}>
-                  <BarChart data={pointsDist}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="activity" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="points" fill="hsl(var(--primary))" />
-                  </BarChart>
-                </ResponsiveContainer>
+              {pointsOption ? (
+                <EChart option={pointsOption} height={250} />
               ) : (
                 <p className="text-muted-foreground text-center py-8">No points data yet</p>
               )}
