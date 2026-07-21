@@ -15,7 +15,7 @@ const PERIODS: { value: PerformancePeriod; label: string }[] = [
   { value: 'all', label: 'All time' },
 ];
 
-const shortName = (title: string) => (title.length > 18 ? title.slice(0, 17).trimEnd() + '…' : title);
+const shortName = (title: string) => (title.length > 15 ? title.slice(0, 14).trimEnd() + '…' : title);
 
 export default function Performance() {
   const [period, setPeriod] = useState<PerformancePeriod>('this_year');
@@ -85,7 +85,7 @@ export default function Performance() {
                 <ResponsiveContainer width="100%" height={280}>
                   <BarChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" tick={{ fontSize: 12 }} interval={0} />
+                    <XAxis dataKey="name" tick={{ fontSize: 11 }} interval={0} />
                     <YAxis />
                     <Tooltip />
                     <Legend />
@@ -108,7 +108,7 @@ export default function Performance() {
                 <ResponsiveContainer width="100%" height={280}>
                   <BarChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" tick={{ fontSize: 12 }} interval={0} />
+                    <XAxis dataKey="name" tick={{ fontSize: 11 }} interval={0} />
                     <YAxis />
                     <Tooltip />
                     <Legend />

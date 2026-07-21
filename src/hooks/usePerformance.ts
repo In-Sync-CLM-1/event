@@ -120,7 +120,9 @@ export function usePerformance(period: PerformancePeriod) {
         else e.passive++;
       }
 
-      const list = [...byEvent.values()];
+      // events with zero registrations (drafts-in-spirit, test shells) would
+      // read as failures — leave them out of the review
+      const list = [...byEvent.values()].filter((e) => e.registered > 0);
       for (const e of list) e.attendanceRate = e.registered ? Math.round((e.attended / e.registered) * 100) : 0;
 
       const totalRegistrations = list.reduce((s, e) => s + e.registered, 0);
