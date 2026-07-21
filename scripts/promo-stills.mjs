@@ -45,8 +45,8 @@ await shot('checkin', `/admin/check-in/${EVENT_ID}`, /Check-In/, async (p) => {
   await p.waitForTimeout(800);
 });
 await shot('engagement', `/admin/events/${EVENT_ID}/engagement`, /Engagement Scoring/);
-await shot('performance', `/admin/performance`, /Sales-Ready Leads/, async (p) => {
-  await p.waitForTimeout(2500); // let recharts draw both charts
+await shot('performance', `/admin/performance`, /Sales-Ready Pipeline/, async (p) => {
+  await p.waitForTimeout(2500); // let echarts draw the funnel + trend
 });
 await ctx.close();
 
