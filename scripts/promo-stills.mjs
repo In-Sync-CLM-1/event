@@ -42,6 +42,9 @@ await shot('analytics', `/admin/events/${EVENT_ID}/analytics`, /Analytics/, asyn
 await shot('reminders', `/admin/events/${EVENT_ID}/reminders`, /Reminder Loop/);
 await shot('checkin', `/admin/check-in/${EVENT_ID}`, /Check-In/, async (p) => {
   await p.getByRole('tab', { name: /manual|search/i }).first().click().catch(() => {});
+  // headless has no camera — the QR tab throws a "Scanner Error" toast; dismiss it
+  for (const b of await p.locator('[toast-close]').all()) await b.click().catch(() => {});
+  await p.getByText('Scanner Error').first().waitFor({ state: 'hidden', timeout: 8000 }).catch(() => {});
   await p.waitForTimeout(800);
 });
 await shot('engagement', `/admin/events/${EVENT_ID}/engagement`, /Engagement Scoring/);

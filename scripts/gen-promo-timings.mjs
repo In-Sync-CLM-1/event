@@ -19,7 +19,7 @@ export const NARR = {
   n2c: "Three, the event never ends. Every guest is scored as they leave — and there's Priya at the top, your hottest lead, ranked.",
   n2d: "And it all adds up. Every event, every registration, every lead, on one performance view — so when leadership asks what your events delivered, you just show them.",
   n3: "The result? A packed room, a flawless day, and your best leads waiting the next morning, not two days lost in a spreadsheet.",
-  n4: "EventSync. Registration is the easy part, we run the day. Book your free demo, and make your next event unforgettable.",
+  n4: "EventSync. Registration is the easy part... We run the day. Book your free demo, and make your next event unforgettable.",
 };
 const ORDER = ['n0', 'n1', 'n2a', 'n2b', 'n2c', 'n2d', 'n3', 'n4'];
 
