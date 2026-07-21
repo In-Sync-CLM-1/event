@@ -33,3 +33,7 @@ dist-ssr
 supabase/.temp/
 scripts/recordings/
 scripts/assets/speakers/*.png
+
+# remotion promo
+remotion-promo/node_modules/
+remotion-promo/out/
