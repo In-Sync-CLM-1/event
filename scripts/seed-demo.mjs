@@ -83,9 +83,14 @@ const DESIGNATIONS = [
 
 // ── wipe old event data FIRST (before deleting auth users, to clear FK refs) ──
 console.log('Wiping old TechFest demo data...');
-const { data: oldEvents } = await sb.from('events').select('id').eq('slug', 'product-summit-2026');
-if (oldEvents?.length) {
-  const eid = oldEvents[0].id;
+const DEMO_SLUGS = [
+  'product-summit-2026',
+  'saas-growth-conclave-2026', 'fintech-founders-roadshow-2026',
+  'd2c-brand-summit-2026', 'ai-in-product-virtual-2026',
+];
+const { data: oldEvents } = await sb.from('events').select('id').in('slug', DEMO_SLUGS);
+for (const oldEv of oldEvents || []) {
+  const eid = oldEv.id;
   for (const tbl of [
     'engagement_scores','content_library','reward_claims','rewards','badge_awards','badges',
     'points_log','attendee_schedules','meeting_requests','meeting_bookings',
@@ -680,6 +685,18 @@ const callWave = callTargets.map((rid, i) => {
     created_at:      daysFromNow(0, 9, (i * 43) % 40),
   };
 });
+// Priya — the promo's through-line character: went quiet, the AI called, she
+// confirmed (and did walk in). Latest timestamp so she tops the reminder log.
+callWave.push({
+  event_id:        EVENT_ID,
+  registration_id: regIds.priya,
+  channel:         'ai_call',
+  kind:            'event_morning',
+  status:          'completed',
+  outcome:         'Confirmed — will attend',
+  detail:          { execution_id: 'demo-exec-priya', conversation_duration: 36 },
+  created_at:      daysFromNow(0, 9, 52),
+});
 
 for (const chunk of [waWave, callWave]) {
   for (let ofs = 0; ofs < chunk.length; ofs += 200) {
@@ -766,6 +783,107 @@ await sb.from('landing_pages').insert({
     { id: 'sec6', type: 'cta',      order: 5, config: { title: 'Ready to join?', ctaText: 'Register Now', ctaUrl: '#register' }},
   ],
 }); // safe;
+
+// ── past events (the Performance page's "how it adds up" story) ──────────────
+// Four completed events earlier this year, each with registrations, event-level
+// check_ins, and engagement tiers — so cross-event analytics have a real quarter
+// of history behind them. Repeat attendee names across events are intentional.
+console.log('Creating past events (performance history)...');
+const PAST_EVENTS = [
+  { title: 'SaaS Growth Conclave',       slug: 'saas-growth-conclave-2026',     monthsAgo: 5, day: 12, city: 'Mumbai',    venue: 'Jio World Centre',        mode: 'in_person', event_type: 'conference', regs: 218, attend: 152 },
+  { title: 'Fintech Founders Roadshow',  slug: 'fintech-founders-roadshow-2026',monthsAgo: 3, day: 9,  city: 'New Delhi', venue: 'The Lalit',               mode: 'in_person', event_type: 'roadshow',   regs: 142, attend: 108 },
+  { title: 'D2C Brand Summit',           slug: 'd2c-brand-summit-2026',         monthsAgo: 2, day: 21, city: 'Bengaluru', venue: 'Sheraton Grand Brigade',  mode: 'in_person', event_type: 'trade_fair', regs: 176, attend: 121 },
+  { title: 'AI in Product — Virtual Day',slug: 'ai-in-product-virtual-2026',    monthsAgo: 1, day: 18, city: null,        venue: 'Online',                  mode: 'virtual',   event_type: 'webinar',    regs: 204, attend: 131 },
+];
+
+const pastDate = (monthsAgo, day, h, m = 0) => {
+  const dt = new Date();
+  dt.setMonth(dt.getMonth() - monthsAgo);
+  dt.setDate(day); dt.setHours(h, m, 0, 0);
+  return dt;
+};
+
+for (const pe of PAST_EVENTS) {
+  const start = pastDate(pe.monthsAgo, pe.day, 9);
+  const end = pastDate(pe.monthsAgo, pe.day, 18);
+  const { data: evRow, error: peErr } = await sb.from('events').insert({
+    title: pe.title, slug: pe.slug,
+    description: `${pe.title} — a TechFest India event.`,
+    venue: pe.venue, address: pe.city ? `${pe.city}` : null, city: pe.city,
+    start_date: start.toISOString(), end_date: end.toISOString(),
+    registration_deadline: new Date(start.getTime() - 2 * 86400000).toISOString(),
+    max_capacity: Math.ceil(pe.regs / 10) * 10 + 40,
+    mode: pe.mode, event_type: pe.event_type, status: 'published',
+    created_by: userIds.rahul,
+  }).select().single();
+  if (peErr) throw new Error(`past event ${pe.slug}: ${peErr.message}`);
+
+  const prefix = pe.slug.split('-').map(w => w[0]).join('').toUpperCase();
+  const namesInEvent = new Set();
+  const rows = [];
+  for (let i = 0; i < pe.regs; i++) {
+    let name;
+    do { name = `${pick(FIRST)} ${pick(LAST)}`; } while (namesInEvent.has(name));
+    namesInEvent.add(name);
+    const [fn, ln] = name.split(' ');
+    const company = pick(CROWD_COMPANIES);
+    const attended = i < pe.attend;
+    const regDaysBefore = 2 + Math.floor(rnd() * 28);
+    rows.push({
+      event_id: evRow.id, user_id: null,
+      full_name: name,
+      email: `${fn.toLowerCase()}.${ln.toLowerCase()}@${company.toLowerCase().replace(/[^a-z]/g, '')}.in`,
+      phone: `+91 9${String(100000000 + Math.floor(rnd() * 899999999)).slice(0, 9)}`,
+      company, designation: pick(CROWD_ROLES),
+      registration_number: `${prefix}-${String(i + 1).padStart(4, '0')}`,
+      status: attended ? 'checked_in' : 'confirmed',
+      registered_at: new Date(start.getTime() - regDaysBefore * 86400000).toISOString(),
+      checked_in_at: attended ? new Date(start.getTime() + (30 + Math.floor(rnd() * 150)) * 60000).toISOString() : null,
+      linkedin_url: rnd() < 0.5 ? 'https://linkedin.com' : null,
+    });
+  }
+  const inserted = [];
+  for (let ofs = 0; ofs < rows.length; ofs += 100) {
+    const { data: batch, error: bErr } = await sb.from('registrations')
+      .insert(rows.slice(ofs, ofs + 100)).select('id, status, checked_in_at');
+    if (bErr) throw new Error(`past regs ${pe.slug} @${ofs}: ${bErr.message}`);
+    inserted.push(...batch);
+  }
+
+  const ciRows = inserted.filter(r => r.status === 'checked_in').map(r => ({
+    event_id: evRow.id, registration_id: r.id, session_id: null,
+    check_in_time: r.checked_in_at, method: rnd() < 0.85 ? 'qr' : 'manual',
+  }));
+  for (let ofs = 0; ofs < ciRows.length; ofs += 500) {
+    const { error: ciErr2 } = await sb.from('check_ins').insert(ciRows.slice(ofs, ofs + 500));
+    if (ciErr2) throw new Error(`past check_ins ${pe.slug}: ${ciErr2.message}`);
+  }
+
+  const esRows = inserted.map((r) => {
+    const attended = r.status === 'checked_in';
+    // non-attendees can only be passive; attendees follow the usual tier mix
+    const roll = rnd();
+    const [tier, score] = !attended ? ['passive', 3 + Math.floor(rnd() * 12)]
+      : roll < 0.09 ? ['hot', 80 + Math.floor(rnd() * 15)]
+      : roll < 0.33 ? ['warm', 60 + Math.floor(rnd() * 20)]
+      : roll < 0.75 ? ['engaged', 35 + Math.floor(rnd() * 25)]
+      : ['passive', 10 + Math.floor(rnd() * 25)];
+    return {
+      event_id: evRow.id, registration_id: r.id, score, tier,
+      breakdown: {
+        points: score * 3 + Math.floor(rnd() * 30),
+        sessions_attended: attended ? Math.min(3, Math.floor(score / 30)) : 0,
+        badges_earned: score >= 70 ? 1 : 0,
+      },
+      calculated_at: end.toISOString(),
+    };
+  });
+  for (let ofs = 0; ofs < esRows.length; ofs += 200) {
+    const { error: esErr2 } = await sb.from('engagement_scores').insert(esRows.slice(ofs, ofs + 200));
+    if (esErr2) throw new Error(`past scores ${pe.slug}: ${esErr2.message}`);
+  }
+  console.log(`  ${pe.title}: ${pe.regs} regs, ${pe.attend} attended`);
+}
 
 console.log('\n✓ TechFest India / Product Summit 2026 seeded successfully.');
 console.log(`  Event ID: ${EVENT_ID}`);

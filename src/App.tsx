@@ -39,6 +39,7 @@ import Engagement from "./pages/admin/Engagement";
 import Analytics from "./pages/admin/Analytics";
 import LandingPageAdmin from "./pages/admin/LandingPage";
 import Registrations from "./pages/admin/Registrations";
+import Performance from "./pages/admin/Performance";
 import Settings from "./pages/admin/Settings";
 import Billing from "./pages/admin/Billing";
 import AdminMeetingSpots from "./pages/admin/MeetingSpots";
@@ -98,6 +99,7 @@ const App = () => (
             <Route path="/admin/check-in" element={<ProtectedRoute allowedRoles={[...adminRoles]}><CheckIn /></ProtectedRoute>} />
             <Route path="/admin/check-in/:eventId" element={<ProtectedRoute allowedRoles={[...adminRoles]}><CheckIn /></ProtectedRoute>} />
             <Route path="/admin/registrations" element={<ProtectedRoute allowedRoles={[...adminRoles]}><Registrations /></ProtectedRoute>} />
+            <Route path="/admin/performance" element={<ProtectedRoute allowedRoles={[...adminRoles]}><Performance /></ProtectedRoute>} />
             <Route path="/admin/settings" element={<ProtectedRoute allowedRoles={[...adminRoles]}><Settings /></ProtectedRoute>} />
             <Route path="/admin/billing" element={<ProtectedRoute allowedRoles={[...adminRoles]}><Billing /></ProtectedRoute>} />
             

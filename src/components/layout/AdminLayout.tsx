@@ -13,6 +13,7 @@ import {
   Share2,
   TrendingUp,
   Wallet,
+  BarChart3,
 } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -31,6 +32,7 @@ const navigation = [
   { name: 'Events', href: '/admin/events', icon: Calendar },
   { name: 'Registrations', href: '/admin/registrations', icon: Users },
   { name: 'Check-In', href: '/admin/check-in', icon: QrCode },
+  { name: 'Performance', href: '/admin/performance', icon: BarChart3 },
   { name: 'Billing', href: '/admin/billing', icon: Wallet },
   { name: 'Settings', href: '/admin/settings', icon: Settings },
 ];
