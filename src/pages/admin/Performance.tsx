@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { usePerformance, PerformancePeriod, EventPerformance } from '@/hooks/usePerformance';
 import { IndianRupee, Flame, TrendingDown, Target, Loader2 } from 'lucide-react';
 import { EChart, viz, vizAxisLabel, vizSplitLine, vizTooltip } from '@/components/charts/EChart';
+import { useUrlState } from '@/hooks/useUrlState';
 
 const PERIODS: { value: PerformancePeriod; label: string }[] = [
   { value: 'this_quarter', label: 'This quarter' },
@@ -26,7 +27,7 @@ export const inr = (n: number): string => {
 };
 
 export default function Performance() {
-  const [period, setPeriod] = useState<PerformancePeriod>('this_year');
+  const [period, setPeriod] = useUrlState<PerformancePeriod>('period', 'this_year');
   const { data, isLoading } = usePerformance(period);
 
   const kpis = [

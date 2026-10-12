@@ -28,6 +28,7 @@ import { useAllContent } from '@/hooks/useAllContent';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { format } from 'date-fns';
 import { PRODUCTION_URL } from '@/lib/constants';
+import { useUrlState } from '@/hooks/useUrlState';
 
 const shareSchema = z.object({
   content_id: z.string().min(1, 'Please select content'),
@@ -37,8 +38,8 @@ const shareSchema = z.object({
 type ShareFormData = z.infer<typeof shareSchema>;
 
 export default function SDRShare() {
-  const [selectedEventId, setSelectedEventId] = useState<string>('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedEventId, setSelectedEventId] = useUrlState<string>('event', 'all');
+  const [searchQuery, setSearchQuery] = useUrlState('q', '');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   
   const eventsQuery = useEvents();

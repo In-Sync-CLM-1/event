@@ -59,6 +59,7 @@ import {
   useBulkCreateMeetingSlots,
   MeetingSlot,
 } from '@/hooks/useAdminMeetingSlots';
+import { UrlTabs } from '@/components/UrlTabs';
 
 export default function AdminMeetingSpots() {
   const { eventId } = useParams<{ eventId: string }>();
@@ -304,7 +305,7 @@ export default function AdminMeetingSpots() {
         </div>
 
         {/* Tabs for Spots and Slots */}
-        <Tabs defaultValue="spots" className="w-full">
+        <UrlTabs param="meetingspots_tab" defaultValue="spots" className="w-full">
           <TabsList className="grid w-full max-w-md grid-cols-2">
             <TabsTrigger value="spots" className="flex items-center gap-2">
               <MapPin className="h-4 w-4" />
@@ -517,7 +518,7 @@ export default function AdminMeetingSpots() {
               </CardContent>
             </Card>
           </TabsContent>
-        </Tabs>
+        </UrlTabs>
       </div>
 
       {/* Spot Create/Edit Dialog */}

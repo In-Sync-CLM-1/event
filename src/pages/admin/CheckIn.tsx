@@ -23,6 +23,7 @@ import { useCheckInStats, useCreateCheckIn } from '@/hooks/useCheckIns';
 import { useRegistrationByNumber } from '@/hooks/useRegistrations';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { UrlTabs } from '@/components/UrlTabs';
 
 type CheckInStatus = 'success' | 'error' | 'already_checked_in';
 
@@ -218,7 +219,7 @@ export default function CheckIn() {
             />
 
             {/* Check-in Methods */}
-            <Tabs defaultValue="scan" className="space-y-6">
+            <UrlTabs param="checkin_tab" defaultValue="scan" className="space-y-6">
               <TabsList className="grid w-full grid-cols-2 max-w-md">
                 <TabsTrigger value="scan" className="gap-2">
                   <QrCode className="h-4 w-4" />
@@ -264,7 +265,7 @@ export default function CheckIn() {
                   </CardContent>
                 </Card>
               </TabsContent>
-            </Tabs>
+            </UrlTabs>
           </>
         )}
 

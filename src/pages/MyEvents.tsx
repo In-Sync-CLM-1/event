@@ -10,6 +10,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useMyRegistrations } from '@/hooks/useRegistrations';
 import { SharedContentTab } from '@/components/my-events/SharedContentTab';
 import { InvitationsTab } from '@/components/my-events/InvitationsTab';
+import { UrlTabs } from '@/components/UrlTabs';
 
 export default function MyEvents() {
   const { user, isLoading: authLoading } = useAuth();
@@ -69,7 +70,7 @@ export default function MyEvents() {
           </p>
         </div>
 
-        <Tabs defaultValue="events" className="space-y-6">
+        <UrlTabs param="myevents_tab" defaultValue="events" className="space-y-6">
           <TabsList>
             <TabsTrigger value="events">My Events</TabsTrigger>
             <TabsTrigger value="content">Shared Content</TabsTrigger>
@@ -162,7 +163,7 @@ export default function MyEvents() {
           <TabsContent value="invitations">
             <InvitationsTab />
           </TabsContent>
-        </Tabs>
+        </UrlTabs>
       </div>
     </MainLayout>
   );

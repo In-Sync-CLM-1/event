@@ -18,6 +18,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useMyRegistrations } from '@/hooks/useRegistrations';
 import { useToast } from '@/hooks/use-toast';
 import { PRODUCTION_URL } from '@/lib/constants';
+import { UrlTabs } from '@/components/UrlTabs';
 
 export default function EventDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -371,7 +372,7 @@ export default function EventDetail() {
             </Link>
 
             <div className="sticky top-20">
-              <Tabs defaultValue="register" className="w-full">
+              <UrlTabs param="eventdetail_tab" defaultValue="register" className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="register">Register</TabsTrigger>
                   <TabsTrigger value="checkin">Check In</TabsTrigger>
@@ -394,7 +395,7 @@ export default function EventDetail() {
                 <TabsContent value="checkin" className="mt-4">
                   <AttendeeCheckIn eventId={event.id} />
                 </TabsContent>
-              </Tabs>
+              </UrlTabs>
             </div>
           </div>
         </div>

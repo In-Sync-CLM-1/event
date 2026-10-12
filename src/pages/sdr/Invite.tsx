@@ -25,6 +25,7 @@ import { useInvitations } from '@/hooks/useInvitations';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { format } from 'date-fns';
 import { PRODUCTION_URL } from '@/lib/constants';
+import { useUrlState } from '@/hooks/useUrlState';
 
 const invitationSchema = z.object({
   event_id: z.string().min(1, 'Please select an event'),
@@ -35,8 +36,8 @@ const invitationSchema = z.object({
 type InvitationFormData = z.infer<typeof invitationSchema>;
 
 export default function SDRInvite() {
-  const [selectedEventId, setSelectedEventId] = useState<string>('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedEventId, setSelectedEventId] = useUrlState<string>('event', 'all');
+  const [searchQuery, setSearchQuery] = useUrlState('q', '');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   
   const eventsQuery = useEvents();

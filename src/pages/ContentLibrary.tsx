@@ -8,6 +8,7 @@ import { usePublicContent, useTrackContentView } from '@/hooks/useContent';
 import { useRegistrations } from '@/hooks/useRegistrations';
 import { useAuth } from '@/contexts/AuthContext';
 import { Video, FileText, Image, ExternalLink, Lock, Play } from 'lucide-react';
+import { UrlTabs } from '@/components/UrlTabs';
 
 export default function ContentLibrary() {
   const { eventId } = useParams<{ eventId: string }>();
@@ -130,7 +131,7 @@ export default function ContentLibrary() {
               </CardContent>
             </Card>
           ) : (
-            <Tabs defaultValue="all">
+            <UrlTabs param="contentlibrary_tab" defaultValue="all">
               <TabsList className="w-full justify-start">
                 <TabsTrigger value="all">All ({content?.length || 0})</TabsTrigger>
                 <TabsTrigger value="videos">Videos ({videos.length})</TabsTrigger>
@@ -167,7 +168,7 @@ export default function ContentLibrary() {
                   links.map((item) => <ContentCard key={item.id} item={item} />)
                 )}
               </TabsContent>
-            </Tabs>
+            </UrlTabs>
           )}
         </div>
       </div>
