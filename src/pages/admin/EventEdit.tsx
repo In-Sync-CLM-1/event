@@ -53,6 +53,7 @@ import { useAdminMeetingSpots } from '@/hooks/useAdminMeetingSpots';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import type { EventStatus } from '@/types/database';
+import { UrlTabs } from '@/components/UrlTabs';
 
 const eventSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -201,7 +202,7 @@ export default function EventEdit() {
           )}
         </div>
 
-        <Tabs defaultValue="details" className="space-y-6">
+        <UrlTabs param="eventedit_tab" defaultValue="details" className="space-y-6">
           <TabsList className="grid w-full grid-cols-7 lg:w-auto lg:inline-grid">
             <TabsTrigger value="details" className="gap-2">
               <Calendar className="h-4 w-4 hidden sm:inline" />
@@ -703,7 +704,7 @@ export default function EventEdit() {
               </CardContent>
             </Card>
           </TabsContent>
-        </Tabs>
+        </UrlTabs>
       </div>
     </AdminLayout>
   );

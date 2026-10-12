@@ -11,6 +11,7 @@ import { useEvents } from '@/hooks/useEvents';
 import { MeetingSpotBooking } from '@/components/meetings/MeetingSpotBooking';
 import { MyMeetingsView } from '@/components/meetings/MyMeetingsView';
 import { Badge } from '@/components/ui/badge';
+import { UrlTabs } from '@/components/UrlTabs';
 
 export default function MeetingSpots() {
   const { eventId } = useParams<{ eventId: string }>();
@@ -106,7 +107,7 @@ export default function MeetingSpots() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="book" className="w-full">
+            <UrlTabs param="meetingspots_tab" defaultValue="book" className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-6">
                 <TabsTrigger value="book" className="flex items-center gap-2">
                   <Users className="h-4 w-4" />
@@ -130,7 +131,7 @@ export default function MeetingSpots() {
               <TabsContent value="my-meetings">
                 <MyMeetingsView eventId={eventId!} userRegistrationId={registration.id} />
               </TabsContent>
-            </Tabs>
+            </UrlTabs>
           </CardContent>
         </Card>
       </div>

@@ -16,10 +16,11 @@ import { useRewards, useCreateReward, useDeleteReward } from '@/hooks/useRewards
 import { useRegistrations } from '@/hooks/useRegistrations';
 import { Trophy, Award, Gift, Plus, Trash2, UserPlus, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
+import { useUrlState } from '@/hooks/useUrlState';
 
 export default function Gamification() {
   const { eventId } = useParams<{ eventId: string }>();
-  const [activeTab, setActiveTab] = useState<'leaderboard' | 'badges' | 'rewards' | 'points'>('leaderboard');
+  const [activeTab, setActiveTab] = useUrlState<'leaderboard' | 'badges' | 'rewards' | 'points'>('tab', 'leaderboard');
   const [showBadgeDialog, setShowBadgeDialog] = useState(false);
   const [showRewardDialog, setShowRewardDialog] = useState(false);
   const [showPointsDialog, setShowPointsDialog] = useState(false);

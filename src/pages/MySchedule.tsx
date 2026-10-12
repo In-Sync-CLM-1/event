@@ -11,6 +11,7 @@ import { useAttendeeSchedule, useRemoveFromSchedule } from '@/hooks/useAttendeeS
 import { useMyRegistrations } from '@/hooks/useRegistrations';
 import { useEvent } from '@/hooks/useEvents';
 import { useToast } from '@/hooks/use-toast';
+import { UrlTabs } from '@/components/UrlTabs';
 
 export default function MySchedule() {
   const { eventSlug } = useParams<{ eventSlug: string }>();
@@ -169,7 +170,7 @@ END:VCALENDAR`;
             </CardContent>
           </Card>
         ) : (
-          <Tabs defaultValue={dates[0]} className="space-y-6">
+          <UrlTabs param="myschedule_tab" defaultValue={dates[0]} className="space-y-6">
             <TabsList className="flex-wrap h-auto gap-2">
               {dates.map((date) => (
                 <TabsTrigger key={date} value={date} className="px-4">
@@ -249,7 +250,7 @@ END:VCALENDAR`;
                   })}
               </TabsContent>
             ))}
-          </Tabs>
+          </UrlTabs>
         )}
       </div>
     </MainLayout>

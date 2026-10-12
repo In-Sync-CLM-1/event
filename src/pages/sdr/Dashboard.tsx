@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -19,10 +18,12 @@ import { useEvents } from '@/hooks/useEvents';
 import { useInvitations } from '@/hooks/useInvitations';
 import { useContentShares } from '@/hooks/useContentShares';
 import { MainLayout } from '@/components/layout/MainLayout';
+import { useUrlState } from '@/hooks/useUrlState';
+import { UrlTabs } from '@/components/UrlTabs';
 
 export default function SDRDashboard() {
   const navigate = useNavigate();
-  const [selectedEventId, setSelectedEventId] = useState<string>('all');
+  const [selectedEventId, setSelectedEventId] = useUrlState<string>('event', 'all');
   const eventsQuery = useEvents();
   const events = eventsQuery.data || [];
   
@@ -160,7 +161,7 @@ export default function SDRDashboard() {
         </div>
 
         {/* Recent Activity */}
-        <Tabs defaultValue="invitations" className="space-y-4">
+        <UrlTabs param="dashboard_tab" defaultValue="invitations" className="space-y-4">
           <TabsList>
             <TabsTrigger value="invitations">Recent Invitations</TabsTrigger>
             <TabsTrigger value="shares">Recent Shares</TabsTrigger>
@@ -256,7 +257,7 @@ export default function SDRDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
-        </Tabs>
+        </UrlTabs>
       </div>
     </MainLayout>
   );

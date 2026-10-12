@@ -14,11 +14,12 @@ import { useRegistrations } from '@/hooks/useRegistrations';
 import { useUserMeetingRequests, useCreateMeetingRequest, useRespondToMeetingRequest, useAvailableSlots } from '@/hooks/useMeetings';
 import { useAuth } from '@/contexts/AuthContext';
 import { Users, MessageSquare, Check, X, Calendar, Search, Linkedin, Info } from 'lucide-react';
+import { useUrlState } from '@/hooks/useUrlState';
 
 export default function Networking() {
   const { eventId } = useParams<{ eventId: string }>();
   const { user } = useAuth();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useUrlState('q', '');
   const [selectedAttendee, setSelectedAttendee] = useState<string | null>(null);
   const [meetingMessage, setMeetingMessage] = useState('');
   const [showLinkedInOnly, setShowLinkedInOnly] = useState(false);

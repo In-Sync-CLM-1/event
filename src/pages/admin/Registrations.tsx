@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Search, Download, Filter, Users, CheckCircle, Clock, XCircle } from 'lucide-react';
 import { AdminLayout } from '@/components/layout/AdminLayout';
@@ -23,6 +22,7 @@ import {
 } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
+import { useUrlState } from '@/hooks/useUrlState';
 
 interface Registration {
   id: string;
@@ -42,9 +42,9 @@ interface Registration {
 }
 
 export default function Registrations() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [eventFilter, setEventFilter] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useUrlState('q', '');
+  const [statusFilter, setStatusFilter] = useUrlState<string>('status', 'all');
+  const [eventFilter, setEventFilter] = useUrlState<string>('event', 'all');
 
   const { data: events } = useQuery({
     queryKey: ['events-for-filter'],

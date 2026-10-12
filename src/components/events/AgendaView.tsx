@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { format } from 'date-fns';
 import { Clock, MapPin, User, Plus, Check, Loader2, Video, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,6 +15,8 @@ import { useAddToSchedule, useRemoveFromSchedule, useAttendeeSchedule } from '@/
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import type { SessionWithSpeakers } from '@/types/database';
+import { useUrlState } from '@/hooks/useUrlState';
+import { UrlTabs } from '@/components/UrlTabs';
 
 interface AgendaViewProps {
   sessions: SessionWithSpeakers[];
@@ -37,7 +38,7 @@ function resolveJoinUrl(session: SessionWithSpeakers, eventSlug?: string): strin
 }
 
 export function AgendaView({ sessions, registrationId, eventId, eventMode = 'in_person', eventSlug, isLoading }: AgendaViewProps) {
-  const [trackFilter, setTrackFilter] = useState<string>('all');
+  const [trackFilter, setTrackFilter] = useUrlState<string>('track', 'all');
   const { data: schedule } = useAttendeeSchedule(registrationId);
   const addToSchedule = useAddToSchedule();
   const removeFromSchedule = useRemoveFromSchedule();
@@ -160,7 +161,7 @@ export function AgendaView({ sessions, registrationId, eventId, eventMode = 'in_
       </div>
 
       {/* Day Tabs */}
-      <Tabs defaultValue={dates[0]} className="space-y-6">
+      <UrlTabs param="agendaview_tab" defaultValue={dates[0]} className="space-y-6">
         <TabsList className="flex-wrap h-auto gap-2">
           {dates.map((date) => (
             <TabsTrigger key={date} value={date} className="px-4">
@@ -286,7 +287,7 @@ export function AgendaView({ sessions, registrationId, eventId, eventMode = 'in_
             </TabsContent>
           );
         })}
-      </Tabs>
+      </UrlTabs>
     </div>
   );
 }
